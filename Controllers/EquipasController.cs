@@ -57,15 +57,92 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Logotipo")] Equipas equipas)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Logotipo")] Equipas equipa, IFormFile ImagemLogo)
         {
+            // a anotação [Bind] informa o servidor de quais os atributos
+            // que devem ser lidos do objeto que vem do browser
+
+            /* Guardar a imagem no disco rígido do Servidor
+             * Algoritmo
+             * 1- há ficheiro?
+             *    1.1 - não
+             *          devolvo controlo ao browser
+             *          com mensagem de erro
+             *    1.2 - sim
+             *          Será imagem (JPG,JPEG,PNG)?
+             *          1.2.1 - não
+             *                  uso logótipo pre-definido
+             *          1.2.2 - sim
+             *                  - determinar o nome da imagem
+             *                  - guardar esse nome na BD
+             *                  - guardar o ficheir no disco rígido
+             */
+
+            // avalia se os dados recebido do browser estão
+            // de acordo com o Model
             if (ModelState.IsValid)
             {
-                _context.Add(equipas);
+                // vars auxiliares
+                string nomeImagem = "";
+                bool haImagem = false;
+
+                // há ficheiro?
+                if (ImagemLogo == null)
+                {
+                    // não há
+                    // crio msg de erro
+                    ModelState.AddModelError("",
+                       "Deve fornecer um logótipo");
+                    // devolver controlo à View
+                    return View(equipa);
+                }
+                else
+                {
+                    // há ficheiro, mas é uma imagem?
+                    if (!(ImagemLogo.ContentType == "image/png" ||
+                         ImagemLogo.ContentType == "image/jpeg"
+                       ))
+                    {
+                        // não
+                        // vamos usar uma imagem pre-definida
+                        equipa.Logotipo = "logoEquipa.png";
+                    }
+                    else
+                    {
+                        // há imagem
+                        haImagem = true;
+                        // gerar nome imagem
+                        Guid g = Guid.NewGuid();
+                        nomeImagem = g.ToString();
+                        string extensaoImagem = Path.GetExtension(ImagemLogo.FileName).ToLowerInvariant();
+                        nomeImagem += extensaoImagem;
+                        // guardar o nome do ficheiro na BD
+                        equipa.Logotipo = nomeImagem;
+                    }
+                }
+
+
+                // adiciona à BD os dados vindos da View
+                _context.Add(equipa);
+                // Commit
                 await _context.SaveChangesAsync();
+
+                // guardar a imagem do logótipo
+                if (haImagem)
+                {
+
+                }
+
+
+
+
+                // redireciona o utilizador para a página de 'início'
+                // dos Cursos
                 return RedirectToAction(nameof(Index));
             }
-            return View(equipas);
+            // se cheguei aqui é pq alguma coisa correu mal
+            // devolve controlo à View, apresentando os dados recebidos
+            return View(equipa);
         }
 
         // GET: Equipas/Edit/5
