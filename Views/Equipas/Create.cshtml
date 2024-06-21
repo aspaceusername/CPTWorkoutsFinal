@@ -1,15 +1,16 @@
 ﻿@model CPTWorkouts.Models.Equipas
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Adicionar Equipa";
 }
 
-<h1>Create</h1>
+<h1>Adicionar uma nova equipa</h1>
 
 <h4>Equipas</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
+        @*O "form" é o que transporta os nossos dados para o servidor*@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -19,18 +20,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="Logotipo" class="control-label"></label>
-                <input asp-for="Logotipo" class="form-control" />
+                <input type="file" accept=".png,.jpg,.jpeg" class="form-control" />
                 <span asp-validation-for="Logotipo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Adicionar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Regressar à listagem das Equipas</a>
 </div>
 
 @section Scripts {

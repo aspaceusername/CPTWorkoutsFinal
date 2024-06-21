@@ -12,6 +12,9 @@ namespace CPTWorkouts.Controllers
 {
     public class EquipasController : Controller
     {
+        /// <summary>
+        /// Referência à BD do projecto
+        /// </summary>
         private readonly ApplicationDbContext _context;
 
         public EquipasController(ApplicationDbContext context)
