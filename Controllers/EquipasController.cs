@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace CPTWorkouts.Controllers
 {
@@ -17,9 +19,14 @@ namespace CPTWorkouts.Controllers
         /// </summary>
         private readonly ApplicationDbContext _context;
 
-        public EquipasController(ApplicationDbContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public EquipasController(
+           ApplicationDbContext context,
+           IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Equipas
@@ -130,7 +137,31 @@ namespace CPTWorkouts.Controllers
                 // guardar a imagem do logótipo
                 if (haImagem)
                 {
+                    // determinar o local de armazenamento da imagem
+                    string localizacaoImagem = Path.Combine(_webHostEnvironment.WebRootPath, "Imagens");
 
+                    // verifica se o diretório existe; se não existir, cria
+                    if (!Directory.Exists(localizacaoImagem))
+                    {
+                        Directory.CreateDirectory(localizacaoImagem);
+                    }
+
+                    // caminho completo onde a imagem será armazenada
+                    localizacaoImagem = Path.Combine(localizacaoImagem, nomeImagem);
+
+                    // guardar a imagem no Disco Rígido
+                    using var stream = new FileStream(localizacaoImagem, FileMode.Create);
+
+                    // carregar a imagem do stream
+                    using (var image = Image.Load(ImagemLogo.OpenReadStream()))
+                    {
+                        // redimensionar a imagem para o tamanho desejado (exemplo: largura de 800 pixels)
+                        int novaLargura = 800;
+                        image.Mutate(x => x.Resize(novaLargura, 0)); // 0 mantém a proporção original
+
+                        // salvar a imagem redimensionada no stream
+                        image.Save(stream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder());
+                    }
                 }
 
 
