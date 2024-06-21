@@ -16,5 +16,7 @@ namespace CPTWorkouts.Data
         public DbSet<CPTWorkouts.Models.Utilizadores> Utilizadores { get; set; } = default!;
         public DbSet<CPTWorkouts.Models.Treinadores> Treinadores { get; set; } = default!;
         public DbSet<CPTWorkouts.Models.Compras> Compras { get; set; } = default!;
+
+
     }
 }
