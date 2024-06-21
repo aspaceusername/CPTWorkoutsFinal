@@ -1,6 +1,6 @@
 ﻿namespace CPTWorkouts.Models
 {
-    public class Treinadores
+    public class Treinadores:Utilizadores
     {
         public Treinadores()
         {
@@ -16,4 +16,4 @@
 
     }
 }
-}
+

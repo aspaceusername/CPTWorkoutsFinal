@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CPTWorkouts.Models;
 
 namespace CPTWorkouts.Data
 {
@@ -9,5 +10,11 @@ namespace CPTWorkouts.Data
             : base(options)
         {
         }
+        public DbSet<CPTWorkouts.Models.Clientes> Clientes { get; set; } = default!;
+        public DbSet<CPTWorkouts.Models.Equipas> Equipas { get; set; } = default!;
+        public DbSet<CPTWorkouts.Models.Servicos> Servicos { get; set; } = default!;
+        public DbSet<CPTWorkouts.Models.Utilizadores> Utilizadores { get; set; } = default!;
+        public DbSet<CPTWorkouts.Models.Treinadores> Treinadores { get; set; } = default!;
+        public DbSet<CPTWorkouts.Models.Compras> Compras { get; set; } = default!;
     }
 }
