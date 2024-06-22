@@ -47,7 +47,10 @@ namespace CPTWorkouts.Controllers
 
         // GET: Clientes/Create
         public IActionResult Create()
-        {
+        {         // procurar os dados das Equipas
+                  // para os apresentar na 'dropdown' da interface
+                  // em SQL: SELECT * FROM Cursos ORDER BY Nome
+                  // em LINQ: _context.Equipas.OrderBy(c=>c.Nome)
             ViewData["EquipaFK"] = new SelectList(_context.Equipas, "Id", "Nome");
             return View();
         }
@@ -57,20 +60,42 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NumCliente,Carrinhos,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes clientes)
+        public async Task<IActionResult> Create([Bind("NumCliente,Carrinhos,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes cliente)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(clientes);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                // var. auxiliar
+                bool haErros = false;
+
+                if (cliente.EquipaFK == -1)
+                {
+                    // não escolhi curso
+                    ModelState.AddModelError("", "Escolha uma equipa, por favor.");
+                    haErros = true;
+                }
+
+
+                if (ModelState.IsValid && !haErros)
+                {
+
+                    // transferir o valor de PropinasAux para Propinas
+                    cliente.Carrinhos = Convert.ToDecimal(cliente.CarrinhosAux.Replace('.', ','));
+                    cliente.Carrinhos = Convert.ToDecimal(cliente.CarrinhosAux.Replace('.', ','));
+
+                    _context.Add(cliente);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // se chego aqui é pq algo correu mal
+                ViewData["EquipaFK"] = new SelectList(_context.Equipas.OrderBy(c => c.Nome), "Id", "Nome", cliente.EquipaFK);
             }
-            ViewData["EquipaFK"] = new SelectList(_context.Equipas, "Id", "Nome", clientes.EquipaFK);
-            return View(clientes);
+            return View(cliente);
         }
 
-        // GET: Clientes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+            // GET: Clientes/Edit/5
+            public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
