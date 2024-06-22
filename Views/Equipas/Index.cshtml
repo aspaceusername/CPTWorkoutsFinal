@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<CPTWorkouts.Models.Equipas>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Equipas";
 }
 
-<h1>Index</h1>
+<h1>Equipas</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Adicionar nova equipa</a>
 </p>
 <table class="table">
     <thead>
@@ -28,12 +28,23 @@
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
             <td>
+                @*
                 @Html.DisplayFor(modelItem => item.Logotipo)
+                *@
+                <img src="~/Imagens/@Html.DisplayFor(modelItem => item.Logotipo)"
+                        alt="logótipo do curso @Html.DisplayFor(modelItem => item.Nome)"
+                        title="@Html.DisplayFor(modelItem => item.Nome)"
+                        width="75px" />
+                <br />
+                <img src="~/Imagens/@item.Logotipo"
+                        alt="logótipo do curso @item.Nome"
+                        title="@item.Nome"
+                        width="75px" />
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
             </td>
         </tr>
 }
