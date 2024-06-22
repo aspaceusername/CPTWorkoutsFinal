@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240621194443_ControllersAndModels")]
-    partial class ControllersAndModels
+    [Migration("20240622200126_RegisterERoles")]
+    partial class RegisterERoles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,7 +79,6 @@ namespace CPTWorkouts.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nome")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Preco")
@@ -112,12 +111,10 @@ namespace CPTWorkouts.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Telemovel")
-                        .IsRequired()
                         .HasMaxLength(19)
                         .HasColumnType("nvarchar(19)");
 
                     b.Property<string>("UserID")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -344,6 +341,9 @@ namespace CPTWorkouts.Data.Migrations
                     b.Property<int>("EquipaFK")
                         .HasColumnType("int");
 
+                    b.Property<int>("NumCliente")
+                        .HasColumnType("int");
+
                     b.HasIndex("EquipaFK");
 
                     b.HasDiscriminator().HasValue("Clientes");
@@ -384,8 +384,7 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasOne("CPTWorkouts.Models.Treinadores", null)
                         .WithMany("ListaEquipas")
-                        .HasForeignKey("
-                        esId");
+                        .HasForeignKey("TreinadoresId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

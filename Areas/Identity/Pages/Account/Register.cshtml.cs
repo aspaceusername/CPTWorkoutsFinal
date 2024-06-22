@@ -146,7 +146,7 @@ namespace Aulas.Areas.Identity.Pages.Account {
 
                // ###########################################
                // Associar este utilizador à Role Treinador
-               await _userManager.AddToRoleAsync(user, "Treinador");
+               await _userManager.AddToRoleAsync(user,"Treinador");
                // ###########################################
 
                try {
