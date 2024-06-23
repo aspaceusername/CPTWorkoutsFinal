@@ -34,7 +34,9 @@ namespace CPTWorkouts.Controllers
             }
 
             var servicos = await _context.Servicos
+                .Include(s => s.ListaTreinadores)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (servicos == null)
             {
                 return NotFound();
@@ -42,6 +44,7 @@ namespace CPTWorkouts.Controllers
 
             return View(servicos);
         }
+
 
         // GET: Servicos/Create
         public IActionResult Create()
@@ -64,8 +67,8 @@ namespace CPTWorkouts.Controllers
             var listaTreinadores = new List<Treinadores>();
             foreach (var treinadorId in listaIdsTreinadores)
             {
-                var treinador = _context.Treinadores.FirstOrDefault(t => t.Id == treinadorId);
-
+                //var treinador = _context.Treinadores.FirstOrDefault(t => t.Id == treinadorId);
+                var treinador = await _context.Treinadores.FindAsync(treinadorId);
                 if (treinador != null)
                 {
                     listaTreinadores.Add(treinador);
@@ -93,7 +96,7 @@ namespace CPTWorkouts.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
+            ViewData["ListaTreinadores"] = _context.Treinadores.ToList();
             return View(servico);
         }
 
