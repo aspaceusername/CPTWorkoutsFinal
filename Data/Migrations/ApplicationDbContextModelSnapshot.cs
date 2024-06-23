@@ -148,6 +148,20 @@ namespace CPTWorkouts.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "t",
+                            Name = "Treinador",
+                            NormalizedName = "TREINADOR"
+                        },
+                        new
+                        {
+                            Id = "adm",
+                            Name = "Administrativo",
+                            NormalizedName = "ADMINISTRATIVO"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

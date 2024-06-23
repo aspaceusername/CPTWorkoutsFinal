@@ -384,8 +384,7 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasOne("CPTWorkouts.Models.Treinadores", null)
                         .WithMany("ListaEquipas")
-                        .HasForeignKey("
-                        esId");
+                        .HasForeignKey("TreinadoresId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

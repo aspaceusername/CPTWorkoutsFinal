@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240622200126_RegisterERoles")]
-    partial class RegisterERoles
+    [Migration("20240622202124_roles")]
+    partial class roles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -151,6 +151,20 @@ namespace CPTWorkouts.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "t",
+                            Name = "Treinador",
+                            NormalizedName = "TREINADOR"
+                        },
+                        new
+                        {
+                            Id = "adm",
+                            Name = "Administrativo",
+                            NormalizedName = "ADMINISTRATIVO"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

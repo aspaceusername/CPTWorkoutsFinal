@@ -9,9 +9,11 @@ using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CPTWorkouts.Controllers
 {
+    [Authorize]
     public class EquipasController : Controller
     {
         /// <summary>
@@ -30,12 +32,14 @@ namespace CPTWorkouts.Controllers
         }
 
         // GET: Equipas
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Equipas.ToListAsync());
         }
 
         // GET: Equipas/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
