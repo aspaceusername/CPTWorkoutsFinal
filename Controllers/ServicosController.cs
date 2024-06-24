@@ -8,17 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace CPTWorkouts.Controllers
 {
-    [Authorize(Roles = "Treinador")]
+    [Authorize(Roles = "Treinador,Administrativo")]
     public class ServicosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ServicosController(ApplicationDbContext context)
+        public ServicosController(
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Servicos
@@ -110,18 +115,61 @@ namespace CPTWorkouts.Controllers
                 return NotFound();
             }
 
-            var servicos = await _context.Servicos.FindAsync(id);
-            if (servicos == null)
-            {
-                return NotFound();
-            }
-            return View(servicos);
-        }
+                if (User.IsInRole("Administrativo"))
+                {
+                    var servico = await _context.Servicos.FindAsync(id);
+                    if (servico == null)
+                    {
+                        return NotFound();
+                    }
 
-        // POST: Servicos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+                    // falta fazer a lista de Treinadores, como no método da criação
+
+
+                    return View(servico);
+                }
+
+                // se chego aqui é pq sou treinador
+                // será que tenho autorização de editar o servico?
+
+                // obter ID da pessoa autenticada
+                var userId = _userManager.GetUserId(User);
+
+                // ID do Utilizador autenticado
+                var idTreinador = _context.Treinadores
+                                   .Where(t => t.UserID == userId)
+                                   .FirstOrDefault()
+                                   .Id;
+
+                // Investigar se o treinador está associado à UC
+                var ServicosComTreinador = _context.Servicos
+                                        .Where(servico => servico.Id == id &&
+                                               servico.ListaTreinadores.Any(t => t.Id == idTreinador))
+                                        .FirstOrDefault();
+
+            // se a UC não é nula, é pq o treinador está associado à UC
+            if (ServicosComTreinador != null)
+                {
+                // falta fazer a lista de treinadores, como no método da criação
+
+                // enviar UC para a View
+                return View(ServicosComTreinador);
+                }
+                else
+                {
+                // O treinador naão está associado
+                // gerar Mensagem de erro
+                // notificar utilizador
+                // etc.
+
+                return NotFound();
+                }
+            }
+
+            // POST: Servicos/Edit/5
+            // To protect from overposting attacks, enable the specific properties you want to bind to.
+            // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+            [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Preco")] Servicos servicos)
         {

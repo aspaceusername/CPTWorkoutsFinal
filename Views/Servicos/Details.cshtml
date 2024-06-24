@@ -26,10 +26,19 @@
             Treinadores
         </dt>
         <dd class="col-sm-10">
-            @foreach (var treinador in Model.ListaTreinadores)
-            {
-                <p>@treinador.Nome</p>
-            }
+            <ul>
+                @foreach (var treinador in Model.ListaTreinadores ?? Enumerable.Empty<Treinadores>())
+                {
+                    <li>
+                        @treinador.Nome
+                        <a asp-action="Details"
+                           asp-controller="Treinadores"
+                           asp-route-id="@Model.Id">
+                            @treinador.Nome
+                        </a>
+                    </li>
+                }
+            </ul>
         </dd>
     </dl>
 </div>
