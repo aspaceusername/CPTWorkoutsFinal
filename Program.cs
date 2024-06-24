@@ -1,3 +1,4 @@
+using Aulas.Data;
 using CPTWorkouts.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    // Invocar o seed da BD
+    app.UseItToSeedSqlServer();
 }
 else
 {
