@@ -110,7 +110,7 @@ namespace CPTWorkouts.Data
                    new Servicos{Nome="Servico A", Preco=49, ListaTreinadores=[ treinadores[0] ]},
                new Servicos{Nome="Servico B",Preco=25, ListaTreinadores=[treinadores[0], treinadores[1] ]},
                new Servicos{Nome="Servico C", Preco=15, ListaTreinadores=[treinadores[1] ]},
-               new Servicos{Nome="Servico D", Preco=64,´ListaTreinadores=[treinadores[1] ]}
+               new Servicos{Nome="Servico D", Preco=64,ListaTreinadores=[treinadores[1] ]}
                 ];
                 await dbContext.Servicos.AddRangeAsync(servicos);
                 haAdicao = true;
