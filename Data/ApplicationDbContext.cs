@@ -27,7 +27,7 @@ namespace CPTWorkouts.Data
           * Atribuir valores às ROLES
           */
          builder.Entity<IdentityRole>().HasData(
-             new IdentityRole { Id = "p", Name = "Professor", NormalizedName = "PROFESSOR" },
+             new IdentityRole { Id = "p", Name = "Treinador", NormalizedName = "TREINADOR" },
              new IdentityRole { Id = "adm", Name = "Administrativo", NormalizedName = "ADMINISTRATIVO" }
              );
 
