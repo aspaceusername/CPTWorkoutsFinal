@@ -153,8 +153,8 @@ namespace CPTWorkouts.Data.Migrations
                         new
                         {
                             Id = "p",
-                            Name = "Professor",
-                            NormalizedName = "PROFESSOR"
+                            Name = "Treinador",
+                            NormalizedName = "TREINADOR"
                         },
                         new
                         {

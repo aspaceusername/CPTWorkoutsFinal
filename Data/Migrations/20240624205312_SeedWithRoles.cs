@@ -5,7 +5,7 @@
 namespace CPTWorkouts.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class SeeddbEnd : Migration
+    public partial class SeedWithRoles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace CPTWorkouts.Data.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "p", null, "Professor", "PROFESSOR" });
+                values: new object[] { "p", null, "Treinador", "TREINADOR" });
         }
 
         /// <inheritdoc />

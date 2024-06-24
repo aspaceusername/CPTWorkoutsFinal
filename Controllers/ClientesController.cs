@@ -72,7 +72,7 @@ namespace CPTWorkouts.Controllers
 
                 if (cliente.EquipaFK == -1)
                 {
-                    // não escolhi curso
+                    // não escolhi equipa
                     ModelState.AddModelError("", "Escolha uma equipa, por favor.");
                     haErros = true;
                 }

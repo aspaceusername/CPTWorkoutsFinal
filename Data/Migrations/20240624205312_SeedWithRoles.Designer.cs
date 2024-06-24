@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240624182845_SeeddbEnd")]
-    partial class SeeddbEnd
+    [Migration("20240624205312_SeedWithRoles")]
+    partial class SeedWithRoles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,8 +156,8 @@ namespace CPTWorkouts.Data.Migrations
                         new
                         {
                             Id = "p",
-                            Name = "Professor",
-                            NormalizedName = "PROFESSOR"
+                            Name = "Treinador",
+                            NormalizedName = "TREINADOR"
                         },
                         new
                         {
