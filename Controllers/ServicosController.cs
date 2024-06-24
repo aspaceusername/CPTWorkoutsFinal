@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CPTWorkouts.Controllers
 {
+    [Authorize(Roles = "Treinador")]
     public class ServicosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -34,7 +36,9 @@ namespace CPTWorkouts.Controllers
             }
 
             var servicos = await _context.Servicos
+                .Include(s => s.ListaTreinadores)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (servicos == null)
             {
                 return NotFound();
@@ -43,9 +47,12 @@ namespace CPTWorkouts.Controllers
             return View(servicos);
         }
 
+
         // GET: Servicos/Create
         public IActionResult Create()
         {
+            // obter a lista de Treinadores existentes na BD
+            ViewData["ListaTreinadores"] = _context.Treinadores.OrderBy(p => p.Nome).ToList();
             return View();
         }
 
@@ -54,15 +61,45 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Preco")] Servicos servicos)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Preco")] Servicos servico, int[] listaIdsTreinadores)
         {
+            // VALIDAR SE FOI ESCOLHIDO PELO MENOS UM Treinador
+
+            // PQ HÁ Treinador(ES)
+            var listaTreinadores = new List<Treinadores>();
+            foreach (var treinadorId in listaIdsTreinadores)
+            {
+                //var treinador = _context.Treinadores.FirstOrDefault(t => t.Id == treinadorId);
+                var treinador = await _context.Treinadores.FindAsync(treinadorId);
+                if (treinador != null)
+                {
+                    listaTreinadores.Add(treinador);
+                }
+            }
+
+
+            if (listaTreinadores != null)
+            {
+                servico.ListaTreinadores = listaTreinadores;
+            }
+            else
+            {
+                // se chego aqui, houve tratalhada feita no browser
+                // gerar mensagem de erro
+                // notificar utilizador
+                // enviar controlo à VIEW
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(servicos);
+
+                _context.Add(servico);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(servicos);
+            ViewData["ListaTreinadores"] = _context.Treinadores.ToList();
+            return View(servico);
         }
 
         // GET: Servicos/Edit/5
