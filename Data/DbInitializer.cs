@@ -43,7 +43,7 @@ namespace CPTWorkouts.Data
             }
 
 
-            // Se não houver Alunos, cria-os
+            // Se não houver Clientes, cria-os
             var clientes = Array.Empty<Clientes>();
             if (!dbContext.Clientes.Any())
             {
@@ -88,7 +88,7 @@ namespace CPTWorkouts.Data
             }
 
 
-            // Se não houver Professores, cria-os
+            // Se não houver Treinadores, cria-os
             var treinadores = Array.Empty<Treinadores>();
             if (!dbContext.Treinadores.Any())
             {

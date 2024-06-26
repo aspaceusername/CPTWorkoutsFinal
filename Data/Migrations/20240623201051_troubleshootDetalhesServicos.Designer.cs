@@ -361,7 +361,7 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
 
-                    b.Property<decimal>("Carrinhos")
+                    b.Property<decimal>("ValorCompra")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("DataCompra")
