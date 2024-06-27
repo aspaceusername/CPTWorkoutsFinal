@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CPTWorkouts.Controllers
 {
-    [Authorize(Roles = "Treinador,Administrativo")]
+    [Authorize(Roles = "Treinador")]
     public class ServicosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -115,7 +115,7 @@ namespace CPTWorkouts.Controllers
                 return NotFound();
             }
 
-                if (User.IsInRole("Administrativo"))
+                if (User.IsInRole("Treinador"))
                 {
                     var servico = await _context.Servicos.FindAsync(id);
                     if (servico == null)

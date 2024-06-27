@@ -9,9 +9,9 @@ using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace CPTWorkouts.Controllers
+namespace CPTWorkouts.Controllers   
 {
-    [Authorize]
+    [Authorize(Roles = "Treinador")]
     public class ClientesController : Controller
     {
         private readonly ApplicationDbContext _context;

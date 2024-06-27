@@ -17,7 +17,7 @@ namespace CPTWorkouts.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "adm", null, "Administrativo", "ADMINISTRATIVO" },
+                    { "cl", null, "Cliente", "CLIENTE" },
                     { "t", null, "Treinador", "TREINADOR" }
                 });
         }

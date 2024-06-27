@@ -101,7 +101,6 @@ namespace CPTWorkouts.Data
             }
 
 
-
             // Se não houver UCs, cria-as
             var servicos = Array.Empty<Servicos>();
             if (!dbContext.Servicos.Any())

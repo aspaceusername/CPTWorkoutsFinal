@@ -1,8 +1,203 @@
-﻿@{
+﻿@model CPTWorkouts.Models.HomeViewModel
+
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+    <script>
+        emailjs.init('Y_Ij37aIjOQxbcix3');
+
+        $(document).ready(function () {
+            var navDemoVisible = false;
+
+            function handleClick(appUrl, webUrl) {
+                const timeout = 1000;
+                const start = Date.now();
+                const fallback = setTimeout(() => {
+                    window.location.href = webUrl;
+                }, timeout);
+
+                window.location.href = appUrl;
+
+                window.addEventListener('pagehide', () => {
+                    clearTimeout(fallback);
+                });
+            }
+
+            $('#navDemoBtn').click(function () {
+                navDemoVisible = !navDemoVisible;
+                $('#navDemo').toggle(navDemoVisible);
+            });
+
+            $('#contactForm').submit(function (e) {
+                e.preventDefault();
+                var formData = {
+                    name: $('#name').val(),
+                    country: $('#country').val(),
+                    email: $('#email').val(),
+                    goals: $('#goals').val()
+                };
+                var templateParams = {
+                    name: formData.name,
+                    country: formData.country,
+                    email: formData.email,
+                    goals: formData.goals
+                };
+                emailjs.send('service_8xq0vo7', 'template_zummwpp', templateParams)
+                    .then(function (response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                        alert('Message Sent!');
+                    }, function (error) {
+                        console.log('FAILED...', error);
+                        alert('An error occurred, please try again.');
+                    });
+            });
+        });
+    </script>
+}
+
+<div>
+    <div class="w3-top w3-text-white w3-black">
+        <div class="w3-bar">
+            <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)" title="Toggle Navigation Menu" id="navDemoBtn"><i class="fa fa-bars"></i></a>
+            <a href="#home" class="w3-bar-item w3-button w3-padding-large">CPT</a>
+            <a href="#about" class="w3-bar-item w3-button w3-padding-large w3-hide-small">SOBRE</a>
+            <a href="#service" class="w3-bar-item w3-button w3-padding-large w3-hide-small">SERVIÇOS</a>
+            <a href="#testimony" class="w3-bar-item w3-button w3-padding-large w3-hide-small">TESTEMUNHOS</a>
+            <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hide-small">INFORMAÇÕES</a>
+        </div>
+    </div>
+
+    <div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:46px">
+        <a href="#about" class="w3-bar-item w3-button w3-padding-large">SOBRE</a>
+        <a href="#service" class="w3-bar-item w3-button w3-padding-large">SERVIÇOS</a>
+        <a href="#testimony" class="w3-bar-item w3-button w3-padding-large">TESTEMUNHOS</a>
+        <a href="#contact" class="w3-bar-item w3-button w3-padding-large">INFORMAÇÕES</a>
+    </div>
 </div>
+
+<section id="home">
+    <div class="hero">
+        <div class="hero-text">
+            <h1>És tu<br />Somos nós</h1>
+            <a href="#service">
+                <button class="subscribe-button" style="width:100%">Vem fazer parte da equipa</button>
+            </a>
+        </div>
+    </div>
+</section>
+<main>
+    <div id="about" class="about">
+        <!-- Your About component content here -->
+    </div>
+    <div class="service" id="service">
+        <h2 class="title-servico">__ Serviços</h2>
+        <div class="service-box">
+            <p>Temos duas formas de te ajudar, uma é com coaching online onde te passamos os planos de treino, planos alimentares!</p>
+            <p>O acompanhamento é diário, sempre que precisares via WhatsApp, para que possas focar-te mais no que importa e teres bons resultados.</p>
+        </div>
+        <div class="card">
+            <div class="card-list">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/gMpS8zy/al5ehqe9.png" alt="Photo by Anastase Maragos | Unsplash" />
+                </div>
+                <div class="card-text">
+                    <h4>Treinos em Equipa</h4>
+                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <button class="w3-btn w3-red w3-margin-top w3-round" style="width:100%">Subscreve</button>
+                    </a>
+                </div>
+            </div>
+            <div class="card-list">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/mRrQdfY/n1pf2u6f.png" alt="Photo by Sergio Pedemonte | Unsplash" />
+                </div>
+                <div class="card-text">
+                    <h4>Acompanhamento</h4>
+                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <button class="w3-btn w3-red w3-margin-top w3-round" style="width:100%">Subscreve</button>
+                    </a>
+                </div>
+            </div>
+            <div class="card-list">
+                <div class="card-image">
+                    <img src="https://i.ibb.co/bPrNgLQ/1e9pxhuz.png" alt="Photo by Spencer Davis | Unsplash" />
+                </div>
+                <div class="card-text">
+                    <h4>Treinos Individuais</h4>
+                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <button class="w3-btn w3-red w3-margin-top w3-round" style="width:100%">Subscreve</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="testimony" id="testimony">
+        <h2 class="title">__ Testemunhos</h2>
+        <div class="testimony-main">
+            <div class="testimony-image">
+                <img src="https://i.ibb.co/hdvwHVP/279247150-310768634562939-6152071831569810154-n.jpg" alt="Photo by Karsten Winegeart | Unsplash" />
+            </div>
+            <div class="testimony-text">
+                <a id="social-link" target="_blank" href="https://www.instagram.com/jcarolas/"><h3>@@jcarolas</h3></a>
+                <p style="fontStyle: italic;">"Ficamos logo com outra cabeça depois do treino! É bom, faz bem ao corpo e à mente"</p>
+            </div>
+        </div>
+        <div class="testimony-main">
+            <div class="testimony-image">
+                <img src="https://i.ibb.co/2jcMJwW/img2.jpg" alt="Photo by Hayley Kim Design | Unsplash" />
+            </div>
+            <div class="testimony-text">
+                <a id="social-link" target="_blank" href="https://www.instagram.com/joanasofia/"><h3>@@joanasofia</h3></a>
+                <p style="fontStyle: italic;">"Mais forte e mais feliz, é assim que me sinto depois de cada sessão!"</p>
+            </div>
+        </div>
+        <div class="testimony-main">
+            <div class="testimony-image">
+                <img src="https://i.ibb.co/3yFFBv5/img3.jpg" alt="Photo by Alex on Unsplash" />
+            </div>
+            <div class="testimony-text">
+                <a id="social-link" target="_blank" href="https://www.instagram.com/david_gomes/"><h3>@@david_gomes</h3></a>
+                <p style="fontStyle: italic;">"O melhor treinador de sempre! A motivação e o empenho são contagiantes!"</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact" id="contact">
+        <h2 class="title">__ Informações</h2>
+        <div class="container">
+            <form id="contactForm" class="form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">País</label>
+                        <input type="text" id="country" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goals">Objetivos</label>
+                        <textarea id="goals" required></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button type="submit">Enviar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

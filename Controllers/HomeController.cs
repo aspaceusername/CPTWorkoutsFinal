@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using CPTWorkouts.Models;
 
 namespace CPTWorkouts.Controllers
 {
@@ -6,7 +7,13 @@ namespace CPTWorkouts.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var model = new HomeViewModel
+            {
+                UserName = "User123", // Example data, ensure actual data is populated correctly
+                // Add other necessary properties and initialization
+            };
+
+            return View(model);
         }
     }
 }

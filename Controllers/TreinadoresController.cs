@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CPTWorkouts.Controllers
 {
+    [Authorize(Roles = "Treinador")]
     public class TreinadoresController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -42,13 +44,11 @@ namespace CPTWorkouts.Controllers
 
             return View(treinadores);
         }
-
         // GET: Treinadores/Create
         public IActionResult Create()
         {
             return View();
         }
-
         // POST: Treinadores/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -64,7 +64,6 @@ namespace CPTWorkouts.Controllers
             }
             return View(treinadores);
         }
-
         // GET: Treinadores/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -80,7 +79,6 @@ namespace CPTWorkouts.Controllers
             }
             return View(treinadores);
         }
-
         // POST: Treinadores/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -115,7 +113,6 @@ namespace CPTWorkouts.Controllers
             }
             return View(treinadores);
         }
-
         // GET: Treinadores/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -133,7 +130,6 @@ namespace CPTWorkouts.Controllers
 
             return View(treinadores);
         }
-
         // POST: Treinadores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
