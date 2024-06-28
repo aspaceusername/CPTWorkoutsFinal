@@ -227,11 +227,11 @@ h3 {
 .testimony-text {
     width: 40%;
 }
-
-.contact {
+/*old contact css*/
+/*
+    .contact {
     color: white;
     background-color: #242526;
-    /**padding-bottom: 150px;**/
     padding-bottom: 100px;
 }
 
@@ -283,6 +283,7 @@ form {
 
 textarea {
     height: 70px !important;
+    background-color:white;
 }
 
 .name {
@@ -293,6 +294,69 @@ textarea {
 .name-list {
     width: 48%;
 }
+***/
+/*test css for contact section*/
+/* Custom CSS for footer */
+.footer {
+    color: white; /* Change footer text color to white */
+}
+
+/* Custom CSS for contact section */
+.contact {
+    color: white;
+    background-color: #242526;
+    padding-bottom: 100px; /* Added padding top for spacing */
+
+}
+
+.form {
+    background-color: #eee;
+    padding: 30px;
+    margin-top: 30px; /* Added margin top for spacing */
+    border-radius: 10px;
+
+}
+
+.form-group {
+    margin-bottom: 20px;
+    
+}
+
+    .form-group label {
+        color: white; /* Change label text color to white */
+        font-weight: bold; /* Optionally make label text bold */
+
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        border: 1px solid #bdbdbd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: white; /* Ensure input background is transparent */
+        color: black; /* Change input text color to white */
+
+    }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: 1.5px solid gray;
+        }
+
+    .form-group button {
+        background-color: #007bff; /* Button background color */
+        color: white; /* Button text color */
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .form-group button:hover {
+            background-color: #0056b3; /* Darker shade of button on hover */
+        }
+/*test css for contact section*/
 
 .contact-address {
     padding-bottom: 150px;
@@ -304,7 +368,6 @@ textarea {
 .contact-address-list {
     display: flex;
     background-color: #0a0c0f;
-    ;
     justify-content: space-evenly;
     flex-wrap: wrap;
 }
