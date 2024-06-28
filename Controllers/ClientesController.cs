@@ -9,9 +9,9 @@ using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace CPTWorkouts.Controllers
+namespace CPTWorkouts.Controllers   
 {
-    [Authorize]
+    [Authorize(Roles = "Treinador")]
     public class ClientesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -62,7 +62,7 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NumCliente,Carrinhos,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes cliente)
+        public async Task<IActionResult> Create([Bind("NumCliente,ValorCompra,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes cliente)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +72,7 @@ namespace CPTWorkouts.Controllers
 
                 if (cliente.EquipaFK == -1)
                 {
-                    // não escolhi curso
+                    // não escolhi equipa
                     ModelState.AddModelError("", "Escolha uma equipa, por favor.");
                     haErros = true;
                 }
@@ -82,8 +82,8 @@ namespace CPTWorkouts.Controllers
                 {
 
                     // transferir o valor de PropinasAux para Propinas
-                    cliente.Carrinhos = Convert.ToDecimal(cliente.CarrinhosAux.Replace('.', ','));
-                    cliente.Carrinhos = Convert.ToDecimal(cliente.CarrinhosAux.Replace('.', ','));
+                    cliente.ValorCompra = Convert.ToDecimal(cliente.ValorCompraAux.Replace('.', ','));
+                    cliente.ValorCompra = Convert.ToDecimal(cliente.ValorCompraAux.Replace('.', ','));
 
                     _context.Add(cliente);
                     await _context.SaveChangesAsync();
@@ -118,7 +118,7 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NumCliente,Carrinhos,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes clientes)
+        public async Task<IActionResult> Edit(int id, [Bind("NumCliente,ValorCompra,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes clientes)
         {
             if (id != clientes.Id)
             {

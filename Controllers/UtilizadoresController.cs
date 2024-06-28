@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CPTWorkouts.Controllers
 {
+    [Authorize(Roles = "Treinador")]
     public class UtilizadoresController : Controller
     {
         private readonly ApplicationDbContext _context;

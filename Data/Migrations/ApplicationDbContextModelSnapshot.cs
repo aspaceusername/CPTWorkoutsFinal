@@ -152,15 +152,15 @@ namespace CPTWorkouts.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "p",
-                            Name = "Professor",
-                            NormalizedName = "PROFESSOR"
+                            Id = "t",
+                            Name = "Treinador",
+                            NormalizedName = "TREINADOR"
                         },
                         new
                         {
-                            Id = "adm",
-                            Name = "Administrativo",
-                            NormalizedName = "ADMINISTRATIVO"
+                            Id = "cl",
+                            Name = "Cliente",
+                            NormalizedName = "CLIENTE"
                         });
                 });
 
@@ -358,9 +358,6 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
 
-                    b.Property<decimal>("Carrinhos")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime>("DataCompra")
                         .HasColumnType("datetime2");
 
@@ -369,6 +366,9 @@ namespace CPTWorkouts.Data.Migrations
 
                     b.Property<int>("NumCliente")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("ValorCompra")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasIndex("EquipaFK");
 

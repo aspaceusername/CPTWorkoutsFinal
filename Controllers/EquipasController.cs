@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CPTWorkouts.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Treinador")]
     public class EquipasController : Controller
     {
         /// <summary>

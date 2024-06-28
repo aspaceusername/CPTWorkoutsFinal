@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240621194443_ControllersAndModels")]
-    partial class ControllersAndModels
+    [Migration("20240627112447_TroubleShoot")]
+    partial class TroubleShoot
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,7 +79,6 @@ namespace CPTWorkouts.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Nome")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Preco")
@@ -112,12 +111,10 @@ namespace CPTWorkouts.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Telemovel")
-                        .IsRequired()
                         .HasMaxLength(19)
                         .HasColumnType("nvarchar(19)");
 
                     b.Property<string>("UserID")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -154,6 +151,20 @@ namespace CPTWorkouts.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "t",
+                            Name = "Treinador",
+                            NormalizedName = "TREINADOR"
+                        },
+                        new
+                        {
+                            Id = "cl",
+                            Name = "Cliente",
+                            NormalizedName = "CLIENTE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -331,18 +342,36 @@ namespace CPTWorkouts.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ServicosTreinadores", b =>
+                {
+                    b.Property<int>("ListaTreinadoresId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicosId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListaTreinadoresId", "ServicosId");
+
+                    b.HasIndex("ServicosId");
+
+                    b.ToTable("ServicosTreinadores");
+                });
+
             modelBuilder.Entity("CPTWorkouts.Models.Clientes", b =>
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
-
-                    b.Property<decimal>("ValorCompra")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("DataCompra")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EquipaFK")
                         .HasColumnType("int");
+
+                    b.Property<int>("NumCliente")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ValorCompra")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasIndex("EquipaFK");
 
@@ -352,11 +381,6 @@ namespace CPTWorkouts.Data.Migrations
             modelBuilder.Entity("CPTWorkouts.Models.Treinadores", b =>
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
-
-                    b.Property<int?>("ServicosId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("ServicosId");
 
                     b.HasDiscriminator().HasValue("Treinadores");
                 });
@@ -438,6 +462,21 @@ namespace CPTWorkouts.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ServicosTreinadores", b =>
+                {
+                    b.HasOne("CPTWorkouts.Models.Treinadores", null)
+                        .WithMany()
+                        .HasForeignKey("ListaTreinadoresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CPTWorkouts.Models.Servicos", null)
+                        .WithMany()
+                        .HasForeignKey("ServicosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CPTWorkouts.Models.Clientes", b =>
                 {
                     b.HasOne("CPTWorkouts.Models.Equipas", "Equipa")
@@ -449,13 +488,6 @@ namespace CPTWorkouts.Data.Migrations
                     b.Navigation("Equipa");
                 });
 
-            modelBuilder.Entity("CPTWorkouts.Models.Treinadores", b =>
-                {
-                    b.HasOne("CPTWorkouts.Models.Servicos", null)
-                        .WithMany("ListaTreinadores")
-                        .HasForeignKey("ServicosId");
-                });
-
             modelBuilder.Entity("CPTWorkouts.Models.Equipas", b =>
                 {
                     b.Navigation("ListaClientes");
@@ -464,8 +496,6 @@ namespace CPTWorkouts.Data.Migrations
             modelBuilder.Entity("CPTWorkouts.Models.Servicos", b =>
                 {
                     b.Navigation("ListaCompras");
-
-                    b.Navigation("ListaTreinadores");
                 });
 
             modelBuilder.Entity("CPTWorkouts.Models.Clientes", b =>

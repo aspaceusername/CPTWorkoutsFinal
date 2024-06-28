@@ -70,7 +70,7 @@ namespace CPTWorkouts.Data.Migrations
                     Telemovel = table.Column<string>(type: "nvarchar(19)", maxLength: 19, nullable: false),
                     UserID = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
-                    Carrinhos = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ValorCompra = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     DataCompra = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EquipaFK = table.Column<int>(type: "int", nullable: true),
                     ServicosId = table.Column<int>(type: "int", nullable: true)
