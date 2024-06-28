@@ -4,7 +4,9 @@
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@section Styles {
+    <link rel="stylesheet" href="~/css/index.cshtml.css" />
+}
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
@@ -59,7 +61,7 @@
         });
     </script>
 }
-
+@* vai ser utilizada outra navbar neste programa
 <div>
     <div class="w3-top w3-text-white w3-black">
         <div class="w3-bar">
@@ -79,7 +81,7 @@
         <a href="#contact" class="w3-bar-item w3-button w3-padding-large">INFORMAÇÕES</a>
     </div>
 </div>
-
+*@
 <section id="home">
     <div class="hero">
         <div class="hero-text">
