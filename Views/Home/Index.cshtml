@@ -172,34 +172,35 @@
 
     <div class="contact" id="contact">
         <h2 class="title">__ Junta-te a nós</h2>
-        <div className="contact-main">
-            <form id="contactForm" class="form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Nome</label>
-                        <input type="text" id="name" required>
+        <div class="contact-main">
+            <div class="contact-form">
+                <form id="contactForm" class="form">
+                    <div class="form-row" id="name">
+                        <div class="form-group">
+                            <input type="text" id="name" placeholder="Nome" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="country">País</label>
-                        <input type="text" id="country" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Email" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <textarea id="goals" placeholder="Quais são os seus objetivos?" required></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="goals">Objetivos</label>
-                        <textarea id="goals" required></textarea>
+                    <div class="form-row">
+                        <div class="form-group" id="mtop">
+                            <button class="w3-red w3-round" id="buttonform" type="submit">Quero receber um E-Book Oferta</button>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <button type="submit">Quero Receber Um E-Book Oferta</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="contact-image">
+                <img src="https://spaces.w3schools.com/images/ZXq7xoo98b0.jpg" alt="Photo by Bruce Mars | Unsplash" />
+            </div>
         </div>
+
     </div>
 </main>
