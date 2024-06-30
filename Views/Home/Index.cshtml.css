@@ -206,6 +206,10 @@ h3 {
             transform: scale(1.05);
             opacity: 0.8; /* Adjust the transparency */
         }
+        .card-image img:active {
+            transform: scale(1.00);
+            opacity: 0.8; /* Adjust the transparency */
+        }
 
 
 .card-text {

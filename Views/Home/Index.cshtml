@@ -59,6 +59,19 @@
                     });
             });
         });
+        //caso o utilizador esteja signed in, pode continuar a sua compra, caso contrário é redireccionado para a página de signup
+        const isUserSignedIn = @User.Identity.IsAuthenticated.ToString().ToLower();
+
+        document.querySelectorAll('.training-link').forEach(link => {
+            link.addEventListener('click', function (event) {
+                if (!isUserSignedIn) {
+                    event.preventDefault();
+                    window.location.href = 'https://localhost:7258/Identity/Account/Register';
+                } else {
+                    window.location.href = this.href;
+                }
+            });
+        });
     </script>
 }
 @* vai ser utilizada outra navbar neste programa
@@ -134,12 +147,12 @@
         <div class="card">
             <div class="card-list">
                 <div class="card-image">
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
                         <img src="https://i.ibb.co/gMpS8zy/al5ehqe9.png" alt="Photo by Anastase Maragos | Unsplash" />
                     </a>
                     <div class="card-text">
                         @*<h4>Treinos em Equipa</h4>*@
-                        <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
                             <button class="card-button" style="width:100%">Treinos em Equipa</button>
                         </a>
                     </div>
@@ -148,26 +161,26 @@
             </div>
             <div class="card-list">
                 <div class="card-image">
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
                         <img src="https://i.ibb.co/mRrQdfY/n1pf2u6f.png" alt="Photo by Sergio Pedemonte | Unsplash" />
                     </a>
                 </div>
                 <div class="card-text">
                     @*<h4>Acompanhamento</h4>*@
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
                         <button class="card-button" style="width:100%">Acompanhamento</button>
                     </a>
                 </div>
             </div>
             <div class="card-list">
                 <div class="card-image">
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
                         <img src="https://i.ibb.co/bPrNgLQ/1e9pxhuz.png" alt="Photo by Spencer Davis | Unsplash" />
                     </a>
                 </div>
                 <div class="card-text">
                     @*<h4>Treinos Individuais</h4>*@
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
                         <button class="card-button" style="width:100%">Treinos Individuais</button>
                     </a>
                 </div>
