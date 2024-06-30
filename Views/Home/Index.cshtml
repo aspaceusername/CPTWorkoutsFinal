@@ -4,7 +4,9 @@
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@section Styles {
+    <link rel="stylesheet" href="~/css/index.cshtml.css" />
+}
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
@@ -57,9 +59,22 @@
                     });
             });
         });
+        //caso o utilizador esteja signed in, pode continuar a sua compra, caso contrário é redireccionado para a página de signup
+        const isUserSignedIn = @User.Identity.IsAuthenticated.ToString().ToLower();
+
+        document.querySelectorAll('.training-link').forEach(link => {
+            link.addEventListener('click', function (event) {
+                if (!isUserSignedIn) {
+                    event.preventDefault();
+                    window.location.href = 'https://localhost:7258/Identity/Account/Register';
+                } else {
+                    window.location.href = this.href;
+                }
+            });
+        });
     </script>
 }
-
+@* vai ser utilizada outra navbar neste programa
 <div>
     <div class="w3-top w3-text-white w3-black">
         <div class="w3-bar">
@@ -79,7 +94,7 @@
         <a href="#contact" class="w3-bar-item w3-button w3-padding-large">INFORMAÇÕES</a>
     </div>
 </div>
-
+*@
 <section id="home">
     <div class="hero">
         <div class="hero-text">
@@ -91,46 +106,82 @@
     </div>
 </section>
 <main>
-    <div id="about" class="about">
-        <!-- Your About component content here -->
+    @*Secção About*@
+    <div class="about" id="about">
+        <div>
+            <h2 class="title">
+                __O teu personal
+            </h2>
+            <div class="about-main">
+                <div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="about-text">
+                    <h3>I'm Cristiano <br /></h3>
+                    <p>Olá, como podes ver na minha página, somos um grupo de fitness online!</p><p> Já há 10 anos a ajudar cada vez mais pessoas!</p>
+                    <p>O nosso objetivo é ajudar a população que tem dificuldades em atingir objetivos fitness ou mesmo até a começar a treinar. </p>
+                    <p>Guiamos e treinamos juntos de uma forma simples.</p>
+                    <p> Tens algum objetivo fitness? Algum problema que achas que possamos ajudar a resolver?</p>
+                    <div style={{marginTop:"40px"}}>
+                        <div class="w3-margin-top" style={{justifyContent:"space-between"}}>
+                            <a id="facebook" href="#"><i class="fa fa-facebook-official w3-hover-opacity icons"></i></a>
+                            <a id="instagram" href="#"><i class="fa fa-instagram w3-hover-opacity icons"></i></a>
+                            <a id="linkedin" href="#"><i class="fa fa-linkedin w3-hover-opacity icons"></i></a>
+                        </div>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    @*Fim da Secção About*@
     <div class="service" id="service">
         <h2 class="title-servico">__ Serviços</h2>
-        <div class="service-box">
-            <p>Temos duas formas de te ajudar, uma é com coaching online onde te passamos os planos de treino, planos alimentares!</p>
-            <p>O acompanhamento é diário, sempre que precisares via WhatsApp, para que possas focar-te mais no que importa e teres bons resultados.</p>
+        <div class="container">
+            <div class="service-box">
+                <p>Temos duas formas de te ajudar, uma é com coaching online onde te passamos os planos de treino, planos alimentares!</p>
+                <p>O acompanhamento é diário, sempre que precisares via WhatsApp, para que possas focar-te mais no que importa e teres bons resultados.</p>
+            </div>
         </div>
         <div class="card">
             <div class="card-list">
                 <div class="card-image">
-                    <img src="https://i.ibb.co/gMpS8zy/al5ehqe9.png" alt="Photo by Anastase Maragos | Unsplash" />
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <img src="https://i.ibb.co/gMpS8zy/al5ehqe9.png" alt="Photo by Anastase Maragos | Unsplash" />
+                    </a>
+                    <div class="card-text">
+                        @*<h4>Treinos em Equipa</h4>*@
+                        <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                            <button class="card-button" style="width:100%">Treinos em Equipa</button>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-list">
+                <div class="card-image">
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <img src="https://i.ibb.co/mRrQdfY/n1pf2u6f.png" alt="Photo by Sergio Pedemonte | Unsplash" />
+                    </a>
                 </div>
                 <div class="card-text">
-                    <h4>Treinos em Equipa</h4>
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
-                        <button class="w3-btn w3-red w3-margin-top w3-round" style="width:100%">Subscreve</button>
+                    @*<h4>Acompanhamento</h4>*@
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <button class="card-button" style="width:100%">Acompanhamento</button>
                     </a>
                 </div>
             </div>
             <div class="card-list">
                 <div class="card-image">
-                    <img src="https://i.ibb.co/mRrQdfY/n1pf2u6f.png" alt="Photo by Sergio Pedemonte | Unsplash" />
-                </div>
-                <div class="card-text">
-                    <h4>Acompanhamento</h4>
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
-                        <button class="w3-btn w3-red w3-margin-top w3-round" style="width:100%">Subscreve</button>
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <img src="https://i.ibb.co/bPrNgLQ/1e9pxhuz.png" alt="Photo by Spencer Davis | Unsplash" />
                     </a>
                 </div>
-            </div>
-            <div class="card-list">
-                <div class="card-image">
-                    <img src="https://i.ibb.co/bPrNgLQ/1e9pxhuz.png" alt="Photo by Spencer Davis | Unsplash" />
-                </div>
                 <div class="card-text">
-                    <h4>Treinos Individuais</h4>
-                    <a target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
-                        <button class="w3-btn w3-red w3-margin-top w3-round" style="width:100%">Subscreve</button>
+                    @*<h4>Treinos Individuais</h4>*@
+                    <a class="training-link" target="_blank" href="https://api.whatsapp.com/send?phone=351915532403&text=Gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20acerca%20dos%20seus%20servi%C3%A7os%20fitness.">
+                        <button class="card-button" style="width:100%">Treinos Individuais</button>
                     </a>
                 </div>
             </div>
@@ -169,35 +220,36 @@
     </div>
 
     <div class="contact" id="contact">
-        <h2 class="title">__ Informações</h2>
-        <div class="container">
-            <form id="contactForm" class="form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Nome</label>
-                        <input type="text" id="name" required>
+        <h2 class="title">__ Junta-te a nós</h2>
+        <div class="contact-main">
+            <div class="contact-form">
+                <form id="contactForm" class="form">
+                    <div class="form-row" id="name">
+                        <div class="form-group">
+                            <input type="text" id="name" placeholder="Nome" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="country">País</label>
-                        <input type="text" id="country" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Email" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <textarea id="goals" placeholder="Quais são os seus objetivos?" required></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="goals">Objetivos</label>
-                        <textarea id="goals" required></textarea>
+                    <div class="form-row">
+                        <div class="form-group" id="mtop">
+                            <button class="w3-red w3-round" id="buttonform" type="submit">Quero receber um E-Book Oferta</button>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <button type="submit">Enviar</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="contact-image">
+                <img src="https://spaces.w3schools.com/images/ZXq7xoo98b0.jpg" alt="Photo by Bruce Mars | Unsplash" />
+            </div>
         </div>
+
     </div>
 </main>
