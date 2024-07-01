@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
     // Invocar o seed da BD
-    app.UseItToSeedSqlServer();
+    await app.UseItToSeedSqlServer();
 }
 else
 {
