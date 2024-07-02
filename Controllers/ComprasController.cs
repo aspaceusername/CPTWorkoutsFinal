@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
@@ -30,7 +29,13 @@ namespace CPTWorkouts.Controllers
                 .Include(c => c.Cliente)
                 .Include(c => c.Servico)
                 .ToListAsync();
-            return compras;
+
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok(compras);
+            }
+
+            return View(compras); // Assuming there's a View to display the list of compras
         }
 
         // GET: api/Compras/5
@@ -44,10 +49,19 @@ namespace CPTWorkouts.Controllers
 
             if (compras == null)
             {
-                return NotFound();
+                if (Request.Headers["Accept"].ToString().Contains("application/json"))
+                {
+                    return NotFound();
+                }
+                return NotFound(); // Assuming there's a View for displaying NotFound
             }
 
-            return compras;
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok(compras);
+            }
+
+            return View(compras); // Assuming there's a View to display the compra details
         }
 
         // POST: api/Compras
@@ -58,9 +72,21 @@ namespace CPTWorkouts.Controllers
             {
                 _context.Add(compras);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetCompras), new { id = compras.ClienteFK }, compras);
+
+                if (Request.Headers["Accept"].ToString().Contains("application/json"))
+                {
+                    return CreatedAtAction(nameof(GetCompras), new { id = compras.ClienteFK }, compras);
+                }
+
+                return RedirectToAction(nameof(GetCompras)); // Redirect to GET action to show updated list
             }
-            return BadRequest(ModelState);
+
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return BadRequest(ModelState);
+            }
+
+            return View(compras); // Assuming there's a View to show the form again with validation errors
         }
 
         // PUT: api/Compras/5
@@ -90,7 +116,12 @@ namespace CPTWorkouts.Controllers
                 }
             }
 
-            return NoContent();
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok(compras);
+            }
+
+            return RedirectToAction(nameof(GetCompras)); // Redirect to GET action to show updated list
         }
 
         // DELETE: api/Compras/5
@@ -106,7 +137,12 @@ namespace CPTWorkouts.Controllers
             _context.Compras.Remove(compras);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok();
+            }
+
+            return RedirectToAction(nameof(GetCompras)); // Redirect to GET action to show updated list
         }
 
         private bool ComprasExists(int id)
