@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CPTWorkouts.Controllers
 {
     [Authorize(Roles = "Treinador")]
-    public class ComprasController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ComprasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -21,147 +22,91 @@ namespace CPTWorkouts.Controllers
             _context = context;
         }
 
-        // GET: Compras
-        public async Task<IActionResult> Index()
+        // GET: api/Compras
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Compras>>> GetCompras()
         {
-            var applicationDbContext = _context.Compras.Include(c => c.Cliente).Include(c => c.Servico);
-            return View(await applicationDbContext.ToListAsync());
+            var compras = await _context.Compras
+                .Include(c => c.Cliente)
+                .Include(c => c.Servico)
+                .ToListAsync();
+            return compras;
         }
 
-        // GET: Compras/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Compras/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Compras>> GetCompras(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var compras = await _context.Compras
                 .Include(c => c.Cliente)
                 .Include(c => c.Servico)
                 .FirstOrDefaultAsync(m => m.ClienteFK == id);
+
             if (compras == null)
             {
                 return NotFound();
             }
 
-            return View(compras);
+            return compras;
         }
 
-        // GET: Compras/Create
-        public IActionResult Create()
-        {
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator");
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id");
-            return View();
-        }
-
-        // POST: Compras/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: api/Compras
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DataCompra,ServicoFK,ClienteFK")] Compras compras)
+        public async Task<ActionResult<Compras>> PostCompras(Compras compras)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(compras);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return CreatedAtAction(nameof(GetCompras), new { id = compras.ClienteFK }, compras);
             }
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator", compras.ClienteFK);
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id", compras.ServicoFK);
-            return View(compras);
+            return BadRequest(ModelState);
         }
 
-        // GET: Compras/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var compras = await _context.Compras.FindAsync(id);
-            if (compras == null)
-            {
-                return NotFound();
-            }
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator", compras.ClienteFK);
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id", compras.ServicoFK);
-            return View(compras);
-        }
-
-        // POST: Compras/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DataCompra,ServicoFK,ClienteFK")] Compras compras)
+        // PUT: api/Compras/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCompras(int id, Compras compras)
         {
             if (id != compras.ClienteFK)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            _context.Entry(compras).State = EntityState.Modified;
+
+            try
             {
-                try
-                {
-                    _context.Update(compras);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ComprasExists(compras.ClienteFK))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await _context.SaveChangesAsync();
             }
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator", compras.ClienteFK);
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id", compras.ServicoFK);
-            return View(compras);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ComprasExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // GET: Compras/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // DELETE: api/Compras/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCompras(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var compras = await _context.Compras
-                .Include(c => c.Cliente)
-                .Include(c => c.Servico)
-                .FirstOrDefaultAsync(m => m.ClienteFK == id);
+            var compras = await _context.Compras.FindAsync(id);
             if (compras == null)
             {
                 return NotFound();
             }
 
-            return View(compras);
-        }
-
-        // POST: Compras/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var compras = await _context.Compras.FindAsync(id);
-            if (compras != null)
-            {
-                _context.Compras.Remove(compras);
-            }
-
+            _context.Compras.Remove(compras);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool ComprasExists(int id)
