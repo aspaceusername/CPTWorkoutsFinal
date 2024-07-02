@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
-using Microsoft.AspNetCore.Authorization;
 
-namespace CPTWorkouts.Controllers   
+namespace CPTWorkouts.Controllers
 {
     [Authorize(Roles = "Treinador")]
-    public class ClientesController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ClientesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -21,166 +21,85 @@ namespace CPTWorkouts.Controllers
             _context = context;
         }
 
-        // GET: Clientes
-        public async Task<IActionResult> Index()
+        // GET: api/Clientes
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
-            var applicationDbContext = _context.Clientes.Include(c => c.Equipa);
-            return View(await applicationDbContext.ToListAsync());
+            var clientes = await _context.Clientes.Include(c => c.Equipa).ToListAsync();
+            return clientes;
         }
 
-        // GET: Clientes/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/Clientes/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Clientes>> GetClientes(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var clientes = await _context.Clientes.Include(c => c.Equipa).FirstOrDefaultAsync(m => m.Id == id);
 
-            var clientes = await _context.Clientes
-                .Include(c => c.Equipa)
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (clientes == null)
             {
                 return NotFound();
             }
 
-            return View(clientes);
+            return clientes;
         }
 
-        // GET: Clientes/Create
-        public IActionResult Create()
-        {         // procurar os dados das Equipas
-                  // para os apresentar na 'dropdown' da interface
-                  // em SQL: SELECT * FROM Cursos ORDER BY Nome
-                  // em LINQ: _context.Equipas.OrderBy(c=>c.Nome)
-            ViewData["EquipaFK"] = new SelectList(_context.Equipas, "Id", "Nome");
-            return View();
-        }
-
-        // POST: Clientes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: api/Clientes
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NumCliente,ValorCompra,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes cliente)
+        public async Task<ActionResult<Clientes>> PostClientes(Clientes cliente)
         {
             if (ModelState.IsValid)
             {
-
-                // var. auxiliar
-                bool haErros = false;
-
-                if (cliente.EquipaFK == -1)
-                {
-                    // não escolhi equipa
-                    ModelState.AddModelError("", "Escolha uma equipa, por favor.");
-                    haErros = true;
-                }
-
-
-                if (ModelState.IsValid && !haErros)
-                {
-
-                    // transferir o valor de PropinasAux para Propinas
-                    cliente.ValorCompra = Convert.ToDecimal(cliente.ValorCompraAux.Replace('.', ','));
-                    cliente.ValorCompra = Convert.ToDecimal(cliente.ValorCompraAux.Replace('.', ','));
-
-                    _context.Add(cliente);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-
-                // se chego aqui é pq algo correu mal
-                ViewData["EquipaFK"] = new SelectList(_context.Equipas.OrderBy(c => c.Nome), "Id", "Nome", cliente.EquipaFK);
+                _context.Add(cliente);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetClientes), new { id = cliente.Id }, cliente);
             }
-            return View(cliente);
+            return BadRequest(ModelState);
         }
 
-            // GET: Clientes/Edit/5
-            public async Task<IActionResult> Edit(int? id)
+        // PUT: api/Clientes/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutClientes(int id, Clientes cliente)
         {
-            if (id == null)
+            if (id != cliente.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            var clientes = await _context.Clientes.FindAsync(id);
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-            ViewData["EquipaFK"] = new SelectList(_context.Equipas, "Id", "Nome", clientes.EquipaFK);
-            return View(clientes);
-        }
+            _context.Entry(cliente).State = EntityState.Modified;
 
-        // POST: Clientes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NumCliente,ValorCompra,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes clientes)
-        {
-            if (id != clientes.Id)
+            try
             {
-                return NotFound();
+                await _context.SaveChangesAsync();
             }
-
-            if (ModelState.IsValid)
+            catch (DbUpdateConcurrencyException)
             {
-                try
+                if (!ClientesExists(id))
                 {
-                    _context.Update(clientes);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!ClientesExists(clientes.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["EquipaFK"] = new SelectList(_context.Equipas, "Id", "Nome", clientes.EquipaFK);
-            return View(clientes);
+
+            return NoContent();
         }
 
-        // GET: Clientes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // DELETE: api/Clientes/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteClientes(int id)
         {
-            if (id == null)
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null)
             {
                 return NotFound();
             }
 
-            var clientes = await _context.Clientes
-                .Include(c => c.Equipa)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-
-            return View(clientes);
-        }
-
-        // POST: Clientes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var clientes = await _context.Clientes.FindAsync(id);
-            if (clientes != null)
-            {
-                _context.Clientes.Remove(clientes);
-            }
-
+            _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool ClientesExists(int id)
