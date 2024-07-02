@@ -3,9 +3,13 @@ using CPTWorkouts.Models;
 
 namespace CPTWorkouts.Controllers
 {
-    public class HomeController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class HomeController : ControllerBase
     {
-        public IActionResult Index()
+        // GET: api/Home
+        [HttpGet]
+        public IActionResult Get()
         {
             var model = new HomeViewModel
             {
@@ -13,7 +17,7 @@ namespace CPTWorkouts.Controllers
                 // Add other necessary properties and initialization
             };
 
-            return View(model);
+            return Ok(model);
         }
     }
 }
