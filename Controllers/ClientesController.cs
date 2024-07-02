@@ -26,7 +26,13 @@ namespace CPTWorkouts.Controllers
         public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
             var clientes = await _context.Clientes.Include(c => c.Equipa).ToListAsync();
-            return clientes;
+
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok(clientes);
+            }
+
+            return View(clientes); // Assuming there's a View to display the list of clientes
         }
 
         // GET: api/Clientes/5
@@ -37,10 +43,19 @@ namespace CPTWorkouts.Controllers
 
             if (clientes == null)
             {
-                return NotFound();
+                if (Request.Headers["Accept"].ToString().Contains("application/json"))
+                {
+                    return NotFound();
+                }
+                return NotFound(); // Assuming there's a View for displaying NotFound
             }
 
-            return clientes;
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok(clientes);
+            }
+
+            return View(clientes); // Assuming there's a View to display the client details
         }
 
         // POST: api/Clientes
@@ -51,9 +66,21 @@ namespace CPTWorkouts.Controllers
             {
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetClientes), new { id = cliente.Id }, cliente);
+
+                if (Request.Headers["Accept"].ToString().Contains("application/json"))
+                {
+                    return CreatedAtAction(nameof(GetClientes), new { id = cliente.Id }, cliente);
+                }
+
+                return RedirectToAction(nameof(GetClientes)); // Redirect to GET action to show updated list
             }
-            return BadRequest(ModelState);
+
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return BadRequest(ModelState);
+            }
+
+            return View(cliente); // Assuming there's a View to show the form again with validation errors
         }
 
         // PUT: api/Clientes/5
@@ -83,7 +110,12 @@ namespace CPTWorkouts.Controllers
                 }
             }
 
-            return NoContent();
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok(cliente);
+            }
+
+            return RedirectToAction(nameof(GetClientes)); // Redirect to GET action to show updated list
         }
 
         // DELETE: api/Clientes/5
@@ -99,7 +131,12 @@ namespace CPTWorkouts.Controllers
             _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Ok();
+            }
+
+            return RedirectToAction(nameof(GetClientes)); // Redirect to GET action to show updated list
         }
 
         private bool ClientesExists(int id)
