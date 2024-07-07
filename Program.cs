@@ -59,4 +59,12 @@ app.MapRazorPages();
 
 app.MapClientesEndpoints();
 
+app.MapComprasEndpoints();
+
+app.MapServicosEndpoints();
+
+app.MapTreinadoresEndpoints();
+
+app.MapEquipasEndpoints();
+
 app.Run();
