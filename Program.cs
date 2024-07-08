@@ -3,7 +3,6 @@ using CPTWorkouts.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Controllers.API;
-//using CPTWorkouts.Controllers.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +18,16 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
+
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("https://cptworkouts-react.azurewebsites.net")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -42,7 +49,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-};
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -51,11 +58,16 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Use the CORS policy
+app.UseCors("AllowSpecificOrigin");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+app.MapUtilizadoresEndpoints();
 
 app.MapClientesEndpoints();
 
