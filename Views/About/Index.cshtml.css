@@ -1,0 +1,635 @@
+﻿/*CSS variables section*/
+:root {
+    color: black !important;
+}
+
+/*Extra Large screens - Extra large desktops*/
+
+/*General CSS and CSS reset*/
+/*este css é tirado do index.css do react*/
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: black !important;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+/*este css é tirado do index.css do react*/
+/*este css é tirado do landing.css do react*/
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+section {
+    margin-top: 0px;
+}
+
+a {
+    text-decoration-thickness: 4.5px;
+    outline: hidden;
+}
+
+.hero {
+    background-image: url("https://i.ibb.co/G92KCJQ/6k7wxryg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 700px;
+}
+
+.hero-text {
+    background-color: rgba(4,7,32,0.5);
+    height: 700px;
+    display: flex;
+    flex-direction: column; /* Ensures items stack vertically */
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Centers text horizontally */
+}
+
+h1 {
+    color: white;
+    text-shadow: 8px 10px 10px #000000;
+    border-top: none;
+    border-bottom: none;
+    padding: 90px 40px;
+    text-transform: uppercase;
+    font-size: 80px;
+    font-weight: 800;
+}
+
+.about {
+    height: 700px;
+    background-image: url("https://i.ibb.co/VWs3CCP/wqtykwzs.png");
+    font-size: 20px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+    background-position: center top;
+}
+
+.icons {
+    font-size: 20px;
+    letter-spacing: 5px;
+}
+
+.title {
+    color: white;
+    width: 100%;
+    margin: auto;
+    padding: 60px 10px 20px;
+    font-size: 50px;
+    font-weight: 600;
+    margin-left: 10%;
+    text-transform: uppercase;
+    width: 80%;
+}
+
+.title-servico {
+    color: white;
+    width: 100%;
+    margin: auto;
+    padding: 60px 10px 20px;
+    font-size: 50px;
+    font-weight: 600;
+    margin-left: 10%;
+    text-transform: uppercase;
+    width: 80%;
+}
+
+.about-main {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.about-text {
+    background-color: rgb(16, 19, 47, .94);
+    padding: 30px;
+    width: 500px;
+    color: white;
+}
+
+.subscribe-button {
+    background-color: #b40219; /* Adjust the color as needed */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-top: none;
+    border-bottom: none;
+    text-transform: uppercase;
+    font-size: 25px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 0px; /* Adjust margin as needed */
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .subscribe-button:hover {
+        background-color: #ff0219; /* Adjust the hover color as needed */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .subscribe-button:focus {
+        outline: none;
+    }
+
+    .subscribe-button:active {
+        background-color: #c40219;
+        transform: scale(0.95);
+    }
+
+.service-box {
+    margin: 20px auto;
+    margin-top: 0px;
+    padding: 20px;
+    width: 100%;
+    font-size: 20px;
+    background-color: rgba(4,7,32,.5);
+    color: white;
+}
+
+h3 {
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.service {
+    padding-bottom: 100px;
+    background-color: black;
+    overflow: hidden;
+}
+
+.card {
+    width: 80%;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: auto;
+    overflow: hidden;
+    background-color: black;
+    color: white;
+}
+
+.card-list {
+    width: 300px;
+    margin-top: 50px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-image {
+    width: 100%;
+    height: 400px;
+    position: relative;
+}
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+        .card-image img:hover {
+            transform: scale(1.05);
+            opacity: 0.8; /* Adjust the transparency */
+        }
+
+        .card-image img:active {
+            transform: scale(1.00);
+            opacity: 0.8; /* Adjust the transparency */
+        }
+
+
+.card-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+    padding: 0px;
+    width: 101%;
+    box-sizing: border-box;
+}
+
+.card-button {
+    background-color: #c40219; /* Adjust the color as needed */
+    color: white;
+    border: none;
+    padding: 20px 20px;
+    border-top: none;
+    border-bottom: none;
+    text-transform: uppercase;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 0px; /* Adjust margin as needed */
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .card-button:hover {
+        background-color: #ff0219; /* Adjust the hover color as needed */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-button:focus {
+        outline: none;
+    }
+
+    .card-button:active {
+        background-color: #c40219;
+        transform: scale(0.95);
+    }
+
+.testimony {
+    /**padding-bottom: 150px;**/
+    background-color: #0a0c0f;
+    overflow: hidden;
+    padding-bottom: 100px;
+    color: white;
+}
+
+.testimony-main {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1;
+    width: 70%;
+    margin: auto;
+    justify-content: space-evenly;
+    margin-top: 50px;
+}
+
+.testimony-image {
+    width: 380px;
+    height: 300px;
+    margin-left: 40px;
+}
+
+    .testimony-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.testimony-text {
+    width: 40%;
+}
+/*old contact css*/
+/*
+    .contact {
+    color: white;
+    background-color: #242526;
+    padding-bottom: 100px;
+}
+
+.contact-image {
+    width: 500px;
+    overflow: hidden;
+}
+
+    .contact-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+.contact-main {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+}
+
+.contact-form {
+    background-color: #eee;
+    padding: 30px;
+}
+
+.input:focus,
+textarea:focus {
+    outline: 1.5px solid gray;
+}
+
+.input,
+textarea {
+    width: 100%;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    padding: 10px !important;
+    margin: 10px 0px;
+    height: 45px;
+    border: 1px solid;
+}
+
+textarea {
+    height: 70px !important;
+    background-color:white;
+}
+
+.name {
+    display: flex;
+    justify-content: space-between;
+}
+
+.name-list {
+    width: 48%;
+}
+***/
+/*test css for contact section*/
+/* Custom CSS for contact section */
+.contact {
+    color: white;
+    background-color: #242526;
+    padding-bottom: 100px; /* Added padding top for spacing */
+}
+
+.contact-main {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+    padding: 30px;
+}
+
+.contact-image {
+    width: 500px;
+    overflow: hidden;
+}
+
+    .contact-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+.contact-form {
+    background-color: #eee;
+    padding: 30px;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#mtop {
+    margin-top: 25px;
+}
+
+#buttonform:hover {
+    background-color: #f44336 !important; /* Example color */
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)
+}
+
+.form-group label {
+    color: white; /* Change label text color to white */
+    font-weight: bold; /* Optionally make label text bold */
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: white; /* Ensure input background is transparent */
+    color: black; /* Change input text color to white */
+}
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: 1.5px solid gray;
+    }
+
+.form-group button {
+    background-color: #007bff; /* Button background color */
+    color: white; /* Button text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+/*test css for contact section*/
+
+.contact-address {
+    padding-bottom: 150px;
+    background-color: #0a0c0f;
+    overflow: hidden;
+}
+
+.contact-address-list {
+    display: flex;
+    background-color: #0a0c0f;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.contact-list {
+    margin: 20px 0px !important;
+}
+
+h4 {
+    text-transform: uppercase;
+}
+
+#navDemo a {
+    font-size: 12px;
+}
+
+
+/*MEDIA QUERIES*/
+/*Large screens - Desktop*/
+@media screen and (min-width: 1700px) {
+    section {
+        background-color: rgba(4,7,32,0.9);
+    }
+
+    .hero {
+        margin: auto;
+        height: 900px;
+    }
+
+    .hero-text {
+        height: 900px;
+    }
+
+    .testimony-main {
+        width: 60%;
+        justify-content: space-evenly;
+    }
+
+    .contact-address-list {
+        margin: auto;
+        width: 70%;
+    }
+}
+
+/*medium screens - Laptops*/
+@media screen and (max-width: 1024px) {
+    .hero {
+        background-image: url("https://i.ibb.co/G92KCJQ/6k7wxryg.png");
+        height: 500px;
+        background-position: center;
+    }
+
+    .hero-text {
+        height: 500px;
+    }
+
+    h1 {
+        font-size: 70px;
+    }
+
+    .testimony-main {
+        width: 90%;
+        justify-content: space-evenly;
+    }
+}
+
+/*Small screens - tablets*/
+@media screen and (max-width: 768px) {
+    .hero {
+        background-image: url("https://i.ibb.co/G92KCJQ/6k7wxryg.png");
+        height: 600px;
+        background-position: center;
+    }
+
+    .hero-text {
+        height: 600px;
+    }
+
+    h1 {
+        font-size: 60px;
+    }
+
+    .about {
+        overflow: hidden;
+    }
+
+    .about-text {
+        background-color: rgba(4,7,32,.5);
+        font-size: 20px;
+    }
+
+    .card {
+        width: 90%;
+        ;
+    }
+
+    .card-list {
+        width: 250px;
+    }
+
+    .title {
+        font-size: 36px;
+    }
+}
+
+/*Extra small screens - phones*/
+@media screen and (max-width: 480px) {
+    .hero {
+        background-image: url("https://i.ibb.co/G92KCJQ/6k7wxryg.png");
+        height: 500px;
+        background-position: center;
+    }
+
+    .hero-text {
+        height: 500px;
+    }
+
+    h1 {
+        font-size: 40px;
+    }
+
+    .about-text {
+        background-color: rgba(4,7,32,.3);
+    }
+
+    .title {
+        font-size: 30px;
+        padding: 30px 10px;
+    }
+
+    h3 {
+        font-size: 25px;
+    }
+
+    .about {
+        height: 500px;
+        ;
+        overflow: hidden;
+        background-position-x: left;
+    }
+
+    .card {
+        width: 100%;
+        ;
+    }
+
+    .card-list {
+        width: 300px;
+    }
+
+    .testimony-main {
+        justify-content: center;
+    }
+
+    .testimony-text {
+        width: 80%;
+    }
+
+    .testimony-image {
+        margin-left: 0px;
+        width: 300px;
+    }
+
+    .contact-main {
+        width: 90%;
+        margin: auto;
+    }
+
+    .name {
+        flex-direction: column;
+    }
+
+    .name-list {
+        width: 100%;
+    }
+
+    .contact-form {
+        width: 100%;
+    }
+
+    .contact-list {
+        width: 80%;
+        border: 1px solid rgb(77, 72, 72);
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+        .contact-list p {
+            font-size: 13px;
+        }
+}
