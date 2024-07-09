@@ -52,8 +52,9 @@ namespace CPTWorkouts.Controllers
         // GET: Compras/Create
         public IActionResult Create()
         {
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator");
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id");
+ 
+            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Nome");
+            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Nome");
             return View();
         }
 
@@ -68,13 +69,12 @@ namespace CPTWorkouts.Controllers
             {
                 // transferir o valor de PropinasAux para Propinas
                 compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ','));
-                compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ','));
                 _context.Add(compras);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator", compras.ClienteFK);
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id", compras.ServicoFK);
+            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Nome", compras.ClienteFK);
+            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Nome", compras.ServicoFK);
             return View(compras);
         }
 
