@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authorization;
+using CPTWorkouts.Data.Migrations;
 
 namespace CPTWorkouts.Controllers
 {
@@ -61,10 +62,13 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DataCompra,ServicoFK,ClienteFK")] Compras compras)
+        public async Task<IActionResult> Create([Bind("DataCompra,ValorCompraAux,ServicoFK,ClienteFK")] Compras compras)
         {
             if (ModelState.IsValid)
             {
+                // transferir o valor de PropinasAux para Propinas
+                compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ','));
+                compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ','));
                 _context.Add(compras);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -97,7 +101,7 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DataCompra,ServicoFK,ClienteFK")] Compras compras)
+        public async Task<IActionResult> Edit(int id, [Bind("DataCompra,ValorCompraAux,ServicoFK,ClienteFK")] Compras compras)
         {
             if (id != compras.ClienteFK)
             {

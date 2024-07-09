@@ -41,8 +41,6 @@ public static class ClientesEndpoints
                 .Where(model => model.Id == id)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(m => m.NumCliente, clientes.NumCliente)
-                    .SetProperty(m => m.ValorCompra, clientes.ValorCompra)
-                    .SetProperty(m => m.DataCompra, clientes.DataCompra)
                     .SetProperty(m => m.EquipaFK, clientes.EquipaFK)
                     .SetProperty(m => m.Id, clientes.Id)
                     .SetProperty(m => m.Nome, clientes.Nome)

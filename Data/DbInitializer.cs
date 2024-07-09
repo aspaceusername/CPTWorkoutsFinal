@@ -91,11 +91,11 @@ namespace CPTWorkouts.Data
                 {
                     clientes = new[]
                     {
-                        new Clientes { Nome = "Mário", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[0], DataCompra = DateTime.Parse("2024-02-15"), NumCliente = 1, UserID = user1.Id },
-                        new Clientes { Nome = "Joana", DataNascimento = DateOnly.Parse("2000-12-16"), Telemovel = "913456789", Equipa = equipas[0], DataCompra = DateTime.Parse("2024-12-15"), NumCliente = 2 },
-                        new Clientes { Nome = "João", DataNascimento = DateOnly.Parse("1999-12-31"), Telemovel = "92345687", Equipa = equipas[0], DataCompra = DateTime.Parse("2024-12-15"), NumCliente = 3 },
-                        new Clientes { Nome = "Maria", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "9612347", Equipa = equipas[1], DataCompra = DateTime.Parse("2024-12-15"), NumCliente = 4 },
-                        new Clientes { Nome = "Ana", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[1], DataCompra = DateTime.Parse("2024-12-15"), NumCliente = 5 }
+                        new Clientes { Nome = "Mário", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[0], NumCliente = 1, UserID = user1.Id },
+                        new Clientes { Nome = "Joana", DataNascimento = DateOnly.Parse("2000-12-16"), Telemovel = "913456789", Equipa = equipas[0], NumCliente = 2 },
+                        new Clientes { Nome = "João", DataNascimento = DateOnly.Parse("1999-12-31"), Telemovel = "92345687", Equipa = equipas[0], NumCliente = 3 },
+                        new Clientes { Nome = "Maria", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "9612347", Equipa = equipas[1], NumCliente = 4 },
+                        new Clientes { Nome = "Ana", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[1], NumCliente = 5 }
                     };
                     await dbContext.Clientes.AddRangeAsync(clientes);
                     haAdicao = true;
@@ -126,8 +126,19 @@ namespace CPTWorkouts.Data
                     await dbContext.Servicos.AddRangeAsync(servicos);
                     haAdicao = true;
                 }
+                await dbContext.SaveChangesAsync();
+                var compras = Array.Empty<Compras>();
+                if (!dbContext.Compras.Any())
+                {
+                    compras = new[]
+                    {
+                        new Compras { DataCompra = DateTime.Now, ValorCompraAux="100.20", ServicoFK= servicos[0].Id,ClienteFK=clientes[0].Id},
+                        new Compras { DataCompra = DateTime.Now.AddDays(-1), ValorCompraAux="200,15", ServicoFK= servicos[1].Id,ClienteFK=clientes[0].Id}
+                    };
+                    await dbContext.Compras.AddRangeAsync(compras);
+                    haAdicao = true;
+                }
             }
-
             try
             {
                 if (haAdicao)
@@ -142,3 +153,4 @@ namespace CPTWorkouts.Data
         }
     }
 }
+

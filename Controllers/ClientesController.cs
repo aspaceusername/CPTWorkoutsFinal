@@ -62,7 +62,7 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NumCliente,ValorCompra,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes cliente)
+        public async Task<IActionResult> Create([Bind("NumCliente,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes cliente)
         {
             if (ModelState.IsValid)
             {
@@ -80,11 +80,6 @@ namespace CPTWorkouts.Controllers
 
                 if (ModelState.IsValid && !haErros)
                 {
-
-                    // transferir o valor de PropinasAux para Propinas
-                    cliente.ValorCompra = Convert.ToDecimal(cliente.ValorCompraAux.Replace('.', ','));
-                    cliente.ValorCompra = Convert.ToDecimal(cliente.ValorCompraAux.Replace('.', ','));
-
                     _context.Add(cliente);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
@@ -118,7 +113,7 @@ namespace CPTWorkouts.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NumCliente,ValorCompra,DataCompra,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes clientes)
+        public async Task<IActionResult> Edit(int id, [Bind("NumCliente,EquipaFK,Id,Nome,DataNascimento,Telemovel,UserID")] Clientes clientes)
         {
             if (id != clientes.Id)
             {
