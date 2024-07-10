@@ -9,6 +9,8 @@ namespace CPTWorkouts.Models
     public class Compras
     {
 
+        public int Id { get; set; }
+
         /// <summary>
         /// Data em que se realizou a compra do serviço por parte do cliente
         /// </summary>

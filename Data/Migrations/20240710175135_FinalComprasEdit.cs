@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CPTWorkouts.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Clientes_Compras_Link : Migration
+    public partial class FinalComprasEdit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +18,13 @@ namespace CPTWorkouts.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "ValorCompra",
                 table: "Utilizadores");
+
+            migrationBuilder.AddColumn<int>(
+                name: "Id",
+                table: "Compras",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<decimal>(
                 name: "ValorCompra",
@@ -38,6 +45,10 @@ namespace CPTWorkouts.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "Id",
+                table: "Compras");
+
             migrationBuilder.DropColumn(
                 name: "ValorCompra",
                 table: "Compras");

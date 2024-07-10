@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240709201615_newLinkEquipasClientes")]
-    partial class newLinkEquipasClientes
+    [Migration("20240710175135_FinalComprasEdit")]
+    partial class FinalComprasEdit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,17 @@ namespace CPTWorkouts.Data.Migrations
 
                     b.Property<DateTime>("DataCompra")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ValorCompra")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ValorCompraAux")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.HasKey("ClienteFK", "ServicoFK");
 
@@ -361,17 +372,11 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
 
-                    b.Property<DateTime>("DataCompra")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("EquipaFK")
                         .HasColumnType("int");
 
                     b.Property<int>("NumCliente")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("ValorCompra")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasIndex("EquipaFK");
 

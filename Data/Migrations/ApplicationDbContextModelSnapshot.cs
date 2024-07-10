@@ -33,6 +33,9 @@ namespace CPTWorkouts.Data.Migrations
                     b.Property<DateTime>("DataCompra")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("ValorCompra")
                         .HasColumnType("decimal(18,2)");
 
