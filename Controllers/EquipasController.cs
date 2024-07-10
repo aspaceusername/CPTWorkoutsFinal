@@ -48,6 +48,7 @@ namespace CPTWorkouts.Controllers
             }
 
             var equipas = await _context.Equipas
+                .Include(e => e.ListaClientes)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (equipas == null)
             {
