@@ -173,7 +173,8 @@ namespace Aulas.Areas.Identity.Pages.Account {
                         Input.Treinador.UserID = user.Id;
                         Input.Treinador.TreinadorID = Input.TreinadorID;
                         _context.Add(Input.Treinador);
-                    }
+                        await _context.SaveChangesAsync();
+                        }
                     else
                     {
                         ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
@@ -183,9 +184,10 @@ namespace Aulas.Areas.Identity.Pages.Account {
                 else
                 {
                     await _userManager.AddToRoleAsync(user, "Cliente");
-
+                    Input.Cliente.NumCliente = 100;
                     Input.Cliente.UserID = user.Id;
                     _context.Add(Input.Cliente);
+                    await _context.SaveChangesAsync();
                 }
 
                 await _context.SaveChangesAsync();

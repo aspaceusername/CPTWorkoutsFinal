@@ -5,24 +5,18 @@
 namespace CPTWorkouts.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class ClienteouTreinador : Migration
+    public partial class clienteoutreinador_v5 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "TreinadorID",
-                table: "Utilizadores",
-                type: "nvarchar(max)",
-                nullable: true);
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "TreinadorID",
-                table: "Utilizadores");
+
         }
     }
 }
