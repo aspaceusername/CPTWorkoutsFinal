@@ -112,7 +112,7 @@ namespace Aulas.Areas.Identity.Pages.Account {
         public Treinadores Treinador { get; set; }
         public string TreinadorID { get; set; }
         public bool IsTreinador { get; set; }
-        public CPTWorkouts.Models.Clientes Cliente { get; set; }
+        public Clientes Cliente { get; set; }
         }
 
         private static readonly List<string> ValidTreinadorIDs = new List<string>
@@ -159,36 +159,40 @@ namespace Aulas.Areas.Identity.Pages.Account {
 
             // ação de, realmente, adicionar à BD (AspNetUsers) os dados do Utilizador
             var result = await _userManager.CreateAsync(user, Input.Password);
-
+            
             if (result.Succeeded) {
                // houve sucesso na criação do Utilizador
                 _logger.LogInformation("User created a new account with password.");
-
-                if (Input.IsTreinador)
-                {
-                    if (ValidTreinadorIDs.Contains(Input.TreinadorID))
+                    Console.WriteLine($"User created a new account with password.");
+                    if (Input.IsTreinador)
                     {
-                        await _userManager.AddToRoleAsync(user, "Treinador");
+                        Console.WriteLine($"User is treinador");
+                        if (ValidTreinadorIDs.Contains(Input.TreinadorID))
+                            {
+                                await _userManager.AddToRoleAsync(user, "Treinador");
 
-                        Input.Treinador.UserID = user.Id;
-                        Input.Treinador.TreinadorID = Input.TreinadorID;
-                        _context.Add(Input.Treinador);
-                        await _context.SaveChangesAsync();
-                        }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
-                        return Page();
+                                Input.Treinador.UserID = user.Id;
+                                Input.Treinador.TreinadorID = Input.TreinadorID;
+                                _context.Add(Input.Treinador);
+                                await _context.SaveChangesAsync();
+                            }
+                        else
+                            {
+                                ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
+                                return Page();
+                            }
                     }
-                }
-                else
-                {
-                    await _userManager.AddToRoleAsync(user, "Cliente");
-                    Input.Cliente.NumCliente = 100;
-                    Input.Cliente.UserID = user.Id;
-                    _context.Add(Input.Cliente);
-                    await _context.SaveChangesAsync();
-                }
+                    else
+                        {
+                            Console.WriteLine($"User is cliente");
+                            await _userManager.AddToRoleAsync(user, "Cliente");
+                            Input.Cliente.UserID = user.Id;
+                            Input.Cliente.NumCliente = 100;
+                            _context.Add(Input.Cliente);
+                            Console.WriteLine($"Added client {Input.Cliente.Nome} to context.");
+                            await _context.SaveChangesAsync();
+                            Console.WriteLine($"saved changes cliente");
+                        }
 
                 await _context.SaveChangesAsync();
                     // ###########################################
@@ -236,8 +240,9 @@ namespace Aulas.Areas.Identity.Pages.Account {
 
                await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    Console.WriteLine($"confirm email sent");
 
-               if (_userManager.Options.SignIn.RequireConfirmedAccount) {
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount) {
                   return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                }
                else {
@@ -250,8 +255,9 @@ namespace Aulas.Areas.Identity.Pages.Account {
             }
          }
 
-         // If we got this far, something failed, redisplay form
-         return Page();
+            // If we got this far, something failed, redisplay form
+            Console.WriteLine($"something went wrong");
+            return Page();
       }
 
       private IdentityUser CreateUser() {

@@ -5,7 +5,7 @@
 namespace CPTWorkouts.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class clienteoutreinador_v5 : Migration
+    public partial class newtest : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240711162945_clientesoutreinadores_v2")]
-    partial class clientesoutreinadores_v2
+    [Migration("20240711184330_newthing")]
+    partial class newthing
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
