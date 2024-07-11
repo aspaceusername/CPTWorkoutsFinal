@@ -91,8 +91,8 @@ namespace CPTWorkouts.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator", compras.ClienteFK);
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id", compras.ServicoFK);
+            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Nome", compras.ClienteFK);
+            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Nome", compras.ServicoFK);
             return View(compras);
         }
 
