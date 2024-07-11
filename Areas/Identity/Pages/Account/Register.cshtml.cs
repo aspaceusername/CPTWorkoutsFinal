@@ -11,6 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using CPTWorkouts.Data;
+using CPTWorkouts.Data.Migrations;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -104,18 +105,25 @@ namespace Aulas.Areas.Identity.Pages.Account {
          [Compare("Password", ErrorMessage = "A password e a sua confirmação não correspondem.")]
          public string ConfirmPassword { get; set; }
 
-         /// <summary>
-         /// incorporação dos dados de um Professor
-         /// no processo de registo de um novo utilizador
-         /// </summary>
-         public Treinadores Treinador { get; set; }
-      }
+            /// <summary>
+            /// incorporação dos dados de um Professor
+            /// no processo de registo de um novo utilizador
+            /// </summary>
+        public Treinadores Treinador { get; set; }
+        public string TreinadorID { get; set; }
+        public bool IsTreinador { get; set; }
+        public CPTWorkouts.Models.Clientes Cliente { get; set; }
+        }
 
+        private static readonly List<string> ValidTreinadorIDs = new List<string>
+        {
+            "1000","1001","1002","1003","1004","1005"
+        };
 
-      public void OnGet(string returnUrl = null) {
+        public void OnGet(string returnUrl = null) {
          ReturnUrl = returnUrl;
          //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-      }
+        }
 
       /// <summary>
       /// Método que reage ao HTTP POST
@@ -141,41 +149,67 @@ namespace Aulas.Areas.Identity.Pages.Account {
 
             if (result.Succeeded) {
                // houve sucesso na criação do Utilizador
-               _logger.LogInformation("User created a new account with password.");
+                _logger.LogInformation("User created a new account with password.");
 
-               // ###########################################
-               // Associar este utilizador à Role Treinador
-               await _userManager.AddToRoleAsync(user,"Treinador");
-               // ###########################################
+                if (Input.IsTreinador)
+                {
+                    if (ValidTreinadorIDs.Contains(Input.TreinadorID))
+                    {
+                        await _userManager.AddToRoleAsync(user, "Treinador");
 
-               try {
-                  // ***********************************
-                  // guardar os dados do Treinador
-                  // ***********************************
+                        Input.Treinador.UserID = user.Id;
+                        Input.Treinador.TreinadorID = Input.TreinadorID;
+                        _context.Add(Input.Treinador);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
+                        return Page();
+                    }
+                }
+                else
+                {
+                    await _userManager.AddToRoleAsync(user, "Cliente");
 
-                  // criar uma ligação entre a tabela dos Utilizadores
-                  // (neste caso, um Treinador) e a tabela da Autenticação
-                  Input.Treinador.UserID = user.Id;
+                    Input.Cliente.UserID = user.Id;
+                    _context.Add(Input.Cliente);
+                }
 
-                  // adicionar os dados do Treinador à BD
-                  _context.Add(Input.Treinador);
-                  await _context.SaveChangesAsync();
-                  // ***********************************
-               }
-               catch (Exception ex) {
-                  // É NECESSÁRIO TRATAR A EXCEÇÃO
-                  // DEFINIR A POLÍTICA, E AÇÕES, A EXECUTAR NESTA SITUAÇÃO
-                  // POR EXEMPLO:
-                  //    - apara o utilizador da tabela da Autenticação
-                  //    - gerar mensagens de erro para a pessoa que está a criar o registo
-                  //    - guardar os dados do Erro num LOG ou na BD
-                  //    - etc.
-                  throw;
-               }
+                await _context.SaveChangesAsync();
+                    // ###########################################
+                    // Associar este utilizador à Role Treinador
 
+                    //await _userManager.AddToRoleAsync(user,"Treinador");
+                    // ###########################################
+                    /*
+                                   try {
+                                      // ***********************************
+                                      // guardar os dados do Treinador
+                                      // ***********************************
 
-               // preparar os dados para o envio do email
-               // ao utilizador para confirmar a conta criada
+                                      // criar uma ligação entre a tabela dos Utilizadores
+                                      // (neste caso, um Treinador) e a tabela da Autenticação
+                                      Input.Treinador.UserID = user.Id;
+
+                                      // adicionar os dados do Treinador à BD
+                                      _context.Add(Input.Treinador);
+                                      await _context.SaveChangesAsync();
+                                      // ***********************************
+                                   }
+                                   catch (Exception ex) {
+                                      // É NECESSÁRIO TRATAR A EXCEÇÃO
+                                      // DEFINIR A POLÍTICA, E AÇÕES, A EXECUTAR NESTA SITUAÇÃO
+                                      // POR EXEMPLO:
+                                      //    - apara o utilizador da tabela da Autenticação
+                                      //    - gerar mensagens de erro para a pessoa que está a criar o registo
+                                      //    - guardar os dados do Erro num LOG ou na BD
+                                      //    - etc.
+                                      throw;
+                                   }
+
+                    */
+                    // preparar os dados para o envio do email
+                    // ao utilizador para confirmar a conta criada
                var userId = await _userManager.GetUserIdAsync(user);
                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
