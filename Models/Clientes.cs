@@ -12,7 +12,7 @@ namespace CPTWorkouts.Models
         {
             ListaCompras = new HashSet<Compras>();
         }
-        public int NumCliente { get; set; }
+        public int? NumCliente { get; set; }
 
 
         /* ****************************************
