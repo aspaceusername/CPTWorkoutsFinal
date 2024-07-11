@@ -3,6 +3,7 @@ using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
+using CPTWorkouts.Data.Migrations;
 namespace CPTWorkouts.Controllers.API;
 
 public static class ComprasEndpoints
@@ -37,6 +38,7 @@ public static class ComprasEndpoints
                     .SetProperty(m => m.DataCompra, compras.DataCompra)
                     .SetProperty(m => m.ServicoFK, compras.ServicoFK)
                     .SetProperty(m => m.ClienteFK, compras.ClienteFK)
+                    .SetProperty(m => m.ValorCompra, compras.ValorCompra)
                     );
             return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
         })
