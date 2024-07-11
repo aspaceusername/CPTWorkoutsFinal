@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authorization;
-using CPTWorkouts.Data.Migrations;
 
 namespace CPTWorkouts.Controllers
 {
@@ -25,14 +23,16 @@ namespace CPTWorkouts.Controllers
         // GET: Compras
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Compras.Include(c => c.Cliente).Include(c => c.Servico);
+            var applicationDbContext = _context.Compras
+                .Include(c => c.Cliente)
+                .Include(c => c.Servico);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Compras/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? clienteFK, int? servicoFK)
         {
-            if (id == null)
+            if (clienteFK == null || servicoFK == null)
             {
                 return NotFound();
             }
@@ -40,7 +40,7 @@ namespace CPTWorkouts.Controllers
             var compras = await _context.Compras
                 .Include(c => c.Cliente)
                 .Include(c => c.Servico)
-                .FirstOrDefaultAsync(m => m.ClienteFK == id);
+                .FirstOrDefaultAsync(m => m.ClienteFK == clienteFK && m.ServicoFK == servicoFK);
             if (compras == null)
             {
                 return NotFound();
@@ -52,23 +52,19 @@ namespace CPTWorkouts.Controllers
         // GET: Compras/Create
         public IActionResult Create()
         {
- 
             ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Nome");
             ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Nome");
             return View();
         }
 
         // POST: Compras/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DataCompra,ValorCompraAux,ServicoFK,ClienteFK")] Compras compras)
         {
             if (ModelState.IsValid)
             {
-                // transferir o valor de PropinasAux para Propinas
-                compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ','));
+                compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ',')); // Convert ValorCompraAux to decimal
                 _context.Add(compras);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -79,31 +75,33 @@ namespace CPTWorkouts.Controllers
         }
 
         // GET: Compras/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? clienteFK, int? servicoFK)
         {
-            if (id == null)
+            if (clienteFK == null || servicoFK == null)
             {
                 return NotFound();
             }
 
-            var compras = await _context.Compras.FindAsync(id);
+            var compras = await _context.Compras
+                .FirstOrDefaultAsync(c => c.ClienteFK == clienteFK && c.ServicoFK == servicoFK);
+
             if (compras == null)
             {
                 return NotFound();
             }
+
             ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Nome", compras.ClienteFK);
             ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Nome", compras.ServicoFK);
+
             return View(compras);
         }
 
         // POST: Compras/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DataCompra,ValorCompraAux,ServicoFK,ClienteFK")] Compras compras)
+        public async Task<IActionResult> Edit(int clienteFK, int servicoFK, [Bind("DataCompra,ValorCompraAux,ServicoFK,ClienteFK")] Compras compras)
         {
-            if (id != compras.ClienteFK)
+            if (clienteFK != compras.ClienteFK || servicoFK != compras.ServicoFK)
             {
                 return NotFound();
             }
@@ -112,12 +110,13 @@ namespace CPTWorkouts.Controllers
             {
                 try
                 {
+                    compras.ValorCompra = Convert.ToDecimal(compras.ValorCompraAux.Replace('.', ',')); // Convert ValorCompraAux to decimal
                     _context.Update(compras);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ComprasExists(compras.ClienteFK))
+                    if (!ComprasExists(clienteFK, servicoFK))
                     {
                         return NotFound();
                     }
@@ -128,15 +127,17 @@ namespace CPTWorkouts.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Discriminator", compras.ClienteFK);
-            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Id", compras.ServicoFK);
+
+            ViewData["ClienteFK"] = new SelectList(_context.Clientes, "Id", "Nome", compras.ClienteFK);
+            ViewData["ServicoFK"] = new SelectList(_context.Servicos, "Id", "Nome", compras.ServicoFK);
+
             return View(compras);
         }
 
         // GET: Compras/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? clienteFK, int? servicoFK)
         {
-            if (id == null)
+            if (clienteFK == null || servicoFK == null)
             {
                 return NotFound();
             }
@@ -144,7 +145,7 @@ namespace CPTWorkouts.Controllers
             var compras = await _context.Compras
                 .Include(c => c.Cliente)
                 .Include(c => c.Servico)
-                .FirstOrDefaultAsync(m => m.ClienteFK == id);
+                .FirstOrDefaultAsync(m => m.ClienteFK == clienteFK && m.ServicoFK == servicoFK);
             if (compras == null)
             {
                 return NotFound();
@@ -156,21 +157,33 @@ namespace CPTWorkouts.Controllers
         // POST: Compras/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int clienteFK, int servicoFK)
         {
-            var compras = await _context.Compras.FindAsync(id);
-            if (compras != null)
+            try
             {
+                var compras = await _context.Compras
+                    .FirstOrDefaultAsync(m => m.ClienteFK == clienteFK && m.ServicoFK == servicoFK);
+
+                if (compras == null)
+                {
+                    return NotFound();
+                }
+
                 _context.Compras.Remove(compras);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return RedirectToAction(nameof(Index)); // Redirect to index on error
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ComprasExists(int id)
+        private bool ComprasExists(int clienteFK, int servicoFK)
         {
-            return _context.Compras.Any(e => e.ClienteFK == id);
+            return _context.Compras.Any(e => e.ClienteFK == clienteFK && e.ServicoFK == servicoFK);
         }
     }
 }
