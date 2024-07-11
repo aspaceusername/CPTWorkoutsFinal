@@ -133,11 +133,24 @@ namespace Aulas.Areas.Identity.Pages.Account {
       public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
          returnUrl ??= Url.Content("~/");
 
-         //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
 
+            if (Input.IsTreinador)
+            {
+                ModelState.Remove("Input.Cliente.Nome");
+                ModelState.Remove("Input.Cliente.DataNascimento");
+                ModelState.Remove("Input.Cliente.Telemovel");
+            }
+            else
+            {
+                ModelState.Remove("Input.Treinador.Nome");
+                ModelState.Remove("Input.Treinador.DataNascimento");
+                ModelState.Remove("Input.Treinador.Telemovel");
+                ModelState.Remove("Input.TreinadorID");
+            }
 
-         if (ModelState.IsValid) {
+            if (ModelState.IsValid) {
 
             var user = CreateUser();
 
