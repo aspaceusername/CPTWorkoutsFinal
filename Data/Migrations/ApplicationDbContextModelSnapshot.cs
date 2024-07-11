@@ -369,10 +369,10 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
 
-                    b.Property<int>("EquipaFK")
+                    b.Property<int?>("EquipaFK")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumCliente")
+                    b.Property<int?>("NumCliente")
                         .HasColumnType("int");
 
                     b.HasIndex("EquipaFK");
@@ -383,6 +383,9 @@ namespace CPTWorkouts.Data.Migrations
             modelBuilder.Entity("CPTWorkouts.Models.Treinadores", b =>
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
+
+                    b.Property<string>("TreinadorID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Treinadores");
                 });
@@ -483,9 +486,7 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasOne("CPTWorkouts.Models.Equipas", "Equipa")
                         .WithMany("ListaClientes")
-                        .HasForeignKey("EquipaFK")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EquipaFK");
 
                     b.Navigation("Equipa");
                 });

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CPTWorkouts.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240627113842_test")]
-    partial class test
+    [Migration("20240711193956_clienteoutreinador")]
+    partial class clienteoutreinador
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,17 @@ namespace CPTWorkouts.Data.Migrations
 
                     b.Property<DateTime>("DataCompra")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ValorCompra")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ValorCompraAux")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.HasKey("ClienteFK", "ServicoFK");
 
@@ -361,17 +372,11 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
 
-                    b.Property<DateTime>("DataCompra")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EquipaFK")
+                    b.Property<int?>("EquipaFK")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumCliente")
+                    b.Property<int?>("NumCliente")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("ValorCompra")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasIndex("EquipaFK");
 
@@ -381,6 +386,9 @@ namespace CPTWorkouts.Data.Migrations
             modelBuilder.Entity("CPTWorkouts.Models.Treinadores", b =>
                 {
                     b.HasBaseType("CPTWorkouts.Models.Utilizadores");
+
+                    b.Property<string>("TreinadorID")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Treinadores");
                 });
@@ -481,9 +489,7 @@ namespace CPTWorkouts.Data.Migrations
                 {
                     b.HasOne("CPTWorkouts.Models.Equipas", "Equipa")
                         .WithMany("ListaClientes")
-                        .HasForeignKey("EquipaFK")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EquipaFK");
 
                     b.Navigation("Equipa");
                 });

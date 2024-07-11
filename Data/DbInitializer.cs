@@ -123,10 +123,11 @@ namespace CPTWorkouts.Data
                         new Servicos { Nome = "Servico C", Preco = 15, ListaTreinadores = new List<Treinadores> { treinadores[1] } },
                         new Servicos { Nome = "Servico D", Preco = 64, ListaTreinadores = new List<Treinadores> { treinadores[1] } }
                     };
+                    await dbContext.SaveChangesAsync();
                     await dbContext.Servicos.AddRangeAsync(servicos);
                     haAdicao = true;
                 }
-                await dbContext.SaveChangesAsync();
+                //await dbContext.SaveChangesAsync();
                 var compras = Array.Empty<Compras>();
                 if (!dbContext.Compras.Any())
                 {

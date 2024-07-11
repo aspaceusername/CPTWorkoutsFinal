@@ -8,6 +8,8 @@
             Servicos = new HashSet<Servicos>();
         }
 
+        public string TreinadorID { get; set; }
+
         /* ****************************************
          * Construção dos Relacionamentos
          * *************************************** */

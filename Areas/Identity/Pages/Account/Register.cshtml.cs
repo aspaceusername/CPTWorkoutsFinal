@@ -11,6 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using CPTWorkouts.Data;
+using CPTWorkouts.Data.Migrations;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -104,18 +105,25 @@ namespace Aulas.Areas.Identity.Pages.Account {
          [Compare("Password", ErrorMessage = "A password e a sua confirmação não correspondem.")]
          public string ConfirmPassword { get; set; }
 
-         /// <summary>
-         /// incorporação dos dados de um Professor
-         /// no processo de registo de um novo utilizador
-         /// </summary>
-         public Treinadores Treinador { get; set; }
-      }
+            /// <summary>
+            /// incorporação dos dados de um Professor
+            /// no processo de registo de um novo utilizador
+            /// </summary>
+        public Treinadores Treinador { get; set; }
+        public string TreinadorID { get; set; }
+        public bool IsTreinador { get; set; }
+        public Clientes Cliente { get; set; }
+        }
 
+        private static readonly List<string> ValidTreinadorIDs = new List<string>
+        {
+            "1000","1001","1002","1003","1004","1005"
+        };
 
-      public void OnGet(string returnUrl = null) {
+        public void OnGet(string returnUrl = null) {
          ReturnUrl = returnUrl;
          //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-      }
+        }
 
       /// <summary>
       /// Método que reage ao HTTP POST
@@ -125,11 +133,24 @@ namespace Aulas.Areas.Identity.Pages.Account {
       public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
          returnUrl ??= Url.Content("~/");
 
-         //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
 
+            if (Input.IsTreinador)
+            {
+                ModelState.Remove("Input.Cliente.Nome");
+                ModelState.Remove("Input.Cliente.DataNascimento");
+                ModelState.Remove("Input.Cliente.Telemovel");
+            }
+            else
+            {
+                ModelState.Remove("Input.Treinador.Nome");
+                ModelState.Remove("Input.Treinador.DataNascimento");
+                ModelState.Remove("Input.Treinador.Telemovel");
+                ModelState.Remove("Input.TreinadorID");
+            }
 
-         if (ModelState.IsValid) {
+            if (ModelState.IsValid) {
 
             var user = CreateUser();
 
@@ -138,44 +159,76 @@ namespace Aulas.Areas.Identity.Pages.Account {
 
             // ação de, realmente, adicionar à BD (AspNetUsers) os dados do Utilizador
             var result = await _userManager.CreateAsync(user, Input.Password);
-
+            
             if (result.Succeeded) {
                // houve sucesso na criação do Utilizador
-               _logger.LogInformation("User created a new account with password.");
+                _logger.LogInformation("User created a new account with password.");
+                    Console.WriteLine($"User created a new account with password.");
+                    if (Input.IsTreinador)
+                    {
+                        Console.WriteLine($"User is treinador");
+                        if (ValidTreinadorIDs.Contains(Input.TreinadorID))
+                            {
+                                await _userManager.AddToRoleAsync(user, "Treinador");
 
-               // ###########################################
-               // Associar este utilizador à Role Treinador
-               await _userManager.AddToRoleAsync(user,"Treinador");
-               // ###########################################
+                                Input.Treinador.UserID = user.Id;
+                                Input.Treinador.TreinadorID = Input.TreinadorID;
+                                _context.Add(Input.Treinador);
+                                await _context.SaveChangesAsync();
+                            }
+                        else
+                            {
+                                ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
+                                return Page();
+                            }
+                    }
+                    else
+                        {
+                            Console.WriteLine($"User is cliente");
+                            await _userManager.AddToRoleAsync(user, "Cliente");
+                            Input.Cliente.UserID = user.Id;
+                            Input.Cliente.NumCliente = 100;
+                            _context.Add(Input.Cliente);
+                            Console.WriteLine($"Added client {Input.Cliente.Nome} to context.");
+                            await _context.SaveChangesAsync();
+                            Console.WriteLine($"saved changes cliente");
+                        }
 
-               try {
-                  // ***********************************
-                  // guardar os dados do Treinador
-                  // ***********************************
+                await _context.SaveChangesAsync();
+                    // ###########################################
+                    // Associar este utilizador à Role Treinador
 
-                  // criar uma ligação entre a tabela dos Utilizadores
-                  // (neste caso, um Treinador) e a tabela da Autenticação
-                  Input.Treinador.UserID = user.Id;
+                    //await _userManager.AddToRoleAsync(user,"Treinador");
+                    // ###########################################
+                    /*
+                                   try {
+                                      // ***********************************
+                                      // guardar os dados do Treinador
+                                      // ***********************************
 
-                  // adicionar os dados do Treinador à BD
-                  _context.Add(Input.Treinador);
-                  await _context.SaveChangesAsync();
-                  // ***********************************
-               }
-               catch (Exception ex) {
-                  // É NECESSÁRIO TRATAR A EXCEÇÃO
-                  // DEFINIR A POLÍTICA, E AÇÕES, A EXECUTAR NESTA SITUAÇÃO
-                  // POR EXEMPLO:
-                  //    - apara o utilizador da tabela da Autenticação
-                  //    - gerar mensagens de erro para a pessoa que está a criar o registo
-                  //    - guardar os dados do Erro num LOG ou na BD
-                  //    - etc.
-                  throw;
-               }
+                                      // criar uma ligação entre a tabela dos Utilizadores
+                                      // (neste caso, um Treinador) e a tabela da Autenticação
+                                      Input.Treinador.UserID = user.Id;
 
+                                      // adicionar os dados do Treinador à BD
+                                      _context.Add(Input.Treinador);
+                                      await _context.SaveChangesAsync();
+                                      // ***********************************
+                                   }
+                                   catch (Exception ex) {
+                                      // É NECESSÁRIO TRATAR A EXCEÇÃO
+                                      // DEFINIR A POLÍTICA, E AÇÕES, A EXECUTAR NESTA SITUAÇÃO
+                                      // POR EXEMPLO:
+                                      //    - apara o utilizador da tabela da Autenticação
+                                      //    - gerar mensagens de erro para a pessoa que está a criar o registo
+                                      //    - guardar os dados do Erro num LOG ou na BD
+                                      //    - etc.
+                                      throw;
+                                   }
 
-               // preparar os dados para o envio do email
-               // ao utilizador para confirmar a conta criada
+                    */
+                    // preparar os dados para o envio do email
+                    // ao utilizador para confirmar a conta criada
                var userId = await _userManager.GetUserIdAsync(user);
                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -187,8 +240,9 @@ namespace Aulas.Areas.Identity.Pages.Account {
 
                await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    Console.WriteLine($"confirm email sent");
 
-               if (_userManager.Options.SignIn.RequireConfirmedAccount) {
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount) {
                   return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                }
                else {
@@ -201,8 +255,9 @@ namespace Aulas.Areas.Identity.Pages.Account {
             }
          }
 
-         // If we got this far, something failed, redisplay form
-         return Page();
+            // If we got this far, something failed, redisplay form
+            Console.WriteLine($"something went wrong");
+            return Page();
       }
 
       private IdentityUser CreateUser() {

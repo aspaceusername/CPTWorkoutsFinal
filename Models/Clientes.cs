@@ -12,7 +12,7 @@ namespace CPTWorkouts.Models
         {
             ListaCompras = new HashSet<Compras>();
         }
-        public int NumCliente { get; set; }
+        public int? NumCliente { get; set; }
 
 
         /* ****************************************
@@ -26,7 +26,7 @@ namespace CPTWorkouts.Models
         // com o atributo 'Equipa'
         [ForeignKey(nameof(Equipa))]
         [Display(Name = "Equipa")]
-        public int EquipaFK { get; set; } // FK para o Curso
+        public int? EquipaFK { get; set; } // FK para o Curso
         public Equipas Equipa { get; set; } // FK para o Curso
 
         // relacionamento N-M, com atributos no relacionamento
