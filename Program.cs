@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://cptworkouts-react.azurewebsites.net")
+        builder => builder.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000")
                           .AllowAnyHeader()
                           .AllowAnyMethod());
 });
