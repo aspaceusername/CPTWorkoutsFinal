@@ -7,7 +7,7 @@ namespace CPTWorkouts.Controllers.API;
 
 public static class UtilizadoresEndpoints
 {
-    public static void MapUtilizadoresEndpoints (this IEndpointRouteBuilder routes)
+    public static void MapUtilizadoresEndpoints(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/Utilizadores").WithTags(nameof(Utilizadores));
 
@@ -31,16 +31,21 @@ public static class UtilizadoresEndpoints
 
         group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, Utilizadores utilizadores, ApplicationDbContext db) =>
         {
-            var affected = await db.Utilizadores
-                .Where(model => model.Id == id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(m => m.Id, utilizadores.Id)
-                    .SetProperty(m => m.Nome, utilizadores.Nome)
-                    .SetProperty(m => m.DataNascimento, utilizadores.DataNascimento)
-                    .SetProperty(m => m.Telemovel, utilizadores.Telemovel)
-                    .SetProperty(m => m.UserID, utilizadores.UserID)
-                    );
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
+            var existingUtilizador = await db.Utilizadores.FindAsync(id);
+
+            if (existingUtilizador == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            existingUtilizador.Nome = utilizadores.Nome;
+            existingUtilizador.DataNascimento = utilizadores.DataNascimento;
+            existingUtilizador.Telemovel = utilizadores.Telemovel;
+            existingUtilizador.UserID = utilizadores.UserID;
+
+            await db.SaveChangesAsync();
+
+            return TypedResults.Ok();
         })
         .WithName("UpdateUtilizadores")
         .WithOpenApi();
@@ -49,7 +54,7 @@ public static class UtilizadoresEndpoints
         {
             db.Utilizadores.Add(utilizadores);
             await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/Utilizadores/{utilizadores.Id}",utilizadores);
+            return TypedResults.Created($"/api/Utilizadores/{utilizadores.Id}", utilizadores);
         })
         .WithName("CreateUtilizadores")
         .WithOpenApi();
