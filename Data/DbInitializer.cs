@@ -72,74 +72,79 @@ namespace CPTWorkouts.Data
             }
 
             // Additional seeding logic...
-            if (user1 != null && user2 != null)
+            var equipas = Array.Empty<Equipas>();
+            if (!dbContext.Equipas.Any())
             {
-                var equipas = Array.Empty<Equipas>();
-                if (!dbContext.Equipas.Any())
+                equipas = new[]
                 {
-                    equipas = new[]
-                    {
-                        new Equipas { Nome = "Equipa A", Logotipo = "noImage.jpg" },
-                        new Equipas { Nome = "Equipa B", Logotipo = "noImage.jpg" }
-                    };
-                    await dbContext.Equipas.AddRangeAsync(equipas);
-                    haAdicao = true;
-                }
-
-                var clientes = Array.Empty<Clientes>();
-                if (!dbContext.Clientes.Any())
-                {
-                    clientes = new[]
-                    {
-                        new Clientes { Nome = "Mário", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[0], NumCliente = 1, UserID = user1.Id },
-                        new Clientes { Nome = "Joana", DataNascimento = DateOnly.Parse("2000-12-16"), Telemovel = "913456789", Equipa = equipas[0], NumCliente = 2 },
-                        new Clientes { Nome = "João", DataNascimento = DateOnly.Parse("1999-12-31"), Telemovel = "92345687", Equipa = equipas[0], NumCliente = 3 },
-                        new Clientes { Nome = "Maria", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "9612347", Equipa = equipas[1], NumCliente = 4 },
-                        new Clientes { Nome = "Ana", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[1], NumCliente = 5 }
-                    };
-                    await dbContext.Clientes.AddRangeAsync(clientes);
-                    haAdicao = true;
-                }
-
-                var treinadores = Array.Empty<Treinadores>();
-                if (!dbContext.Treinadores.Any())
-                {
-                    treinadores = new[]
-                    {
-                        new Treinadores { Nome = "João Mendes", DataNascimento = DateOnly.Parse("1970-04-10"), Telemovel = "919876543", UserID = user2.Id },
-                        new Treinadores { Nome = "Maria Sousa", DataNascimento = DateOnly.Parse("1988-09-12"), Telemovel = "918076543", UserID = "1" }
-                    };
-                    await dbContext.Treinadores.AddRangeAsync(treinadores);
-                    haAdicao = true;
-                }
-
-                var servicos = Array.Empty<Servicos>();
-                if (!dbContext.Servicos.Any())
-                {
-                    servicos = new[]
-                    {
-                        new Servicos { Nome = "Servico A", Preco = 49, ListaTreinadores = new List<Treinadores> { treinadores[0] } },
-                        new Servicos { Nome = "Servico B", Preco = 25, ListaTreinadores = new List<Treinadores> { treinadores[0], treinadores[1] } },
-                        new Servicos { Nome = "Servico C", Preco = 15, ListaTreinadores = new List<Treinadores> { treinadores[1] } },
-                        new Servicos { Nome = "Servico D", Preco = 64, ListaTreinadores = new List<Treinadores> { treinadores[1] } }
-                    };
-                    await dbContext.SaveChangesAsync();
-                    await dbContext.Servicos.AddRangeAsync(servicos);
-                    haAdicao = true;
-                }
-                //await dbContext.SaveChangesAsync();
-                var compras = Array.Empty<Compras>();
-                if (!dbContext.Compras.Any())
-                {
-                    compras = new[]
-                    {
-                        new Compras { DataCompra = DateTime.Now, ValorCompraAux="100.20", ServicoFK= servicos[0].Id,ClienteFK=clientes[0].Id},
-                        new Compras { DataCompra = DateTime.Now.AddDays(-1), ValorCompraAux="200,15", ServicoFK= servicos[1].Id,ClienteFK=clientes[0].Id}
-                    };
-                    await dbContext.Compras.AddRangeAsync(compras);
-                    haAdicao = true;
-                }
+                    new Equipas { Nome = "Equipa A", Logotipo = "noImage.jpg" },
+                    new Equipas { Nome = "Equipa B", Logotipo = "noImage.jpg" }
+                };
+                await dbContext.Equipas.AddRangeAsync(equipas);
+                await dbContext.SaveChangesAsync();
+                haAdicao = true;
             }
+
+            var clientes = Array.Empty<Clientes>();
+            if (!dbContext.Clientes.Any())
+            {
+                clientes = new[]
+                {
+                    new Clientes { Nome = "Mário", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[0], NumCliente = 1, UserID = user1.Id },
+                    new Clientes { Nome = "Joana", DataNascimento = DateOnly.Parse("2000-12-16"), Telemovel = "913456789", Equipa = equipas[0], NumCliente = 2, UserID = "2" },
+                    new Clientes { Nome = "João", DataNascimento = DateOnly.Parse("1999-12-31"), Telemovel = "92345687", Equipa = equipas[0], NumCliente = 3, UserID = "3" },
+                    new Clientes { Nome = "Maria", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "9612347", Equipa = equipas[1], NumCliente = 4, UserID = "4" },
+                    new Clientes { Nome = "Ana", DataNascimento = DateOnly.Parse("2000-12-15"), Telemovel = "", Equipa = equipas[1], NumCliente = 5, UserID = "5"}
+                };
+                await dbContext.Clientes.AddRangeAsync(clientes);
+                await dbContext.SaveChangesAsync();
+                haAdicao = true;
+            }
+
+            var treinadores = Array.Empty<Treinadores>();
+            if (!dbContext.Treinadores.Any())
+            {
+                treinadores = new[]
+                {
+                    new Treinadores { Nome = "João Mendes", DataNascimento = DateOnly.Parse("1970-04-10"), Telemovel = "919876543", UserID = user2.Id },
+                    new Treinadores { Nome = "Maria Sousa", DataNascimento = DateOnly.Parse("1988-09-12"), Telemovel = "918076543", UserID = "1" }
+                };
+                await dbContext.Treinadores.AddRangeAsync(treinadores);
+                await dbContext.SaveChangesAsync();
+                haAdicao = true;
+            }
+
+            var servicos = Array.Empty<Servicos>();
+            if (!dbContext.Servicos.Any())
+            {
+                servicos = new[]
+                {
+                    new Servicos { Nome = "Servico A", Preco = 49, ListaTreinadores = new List<Treinadores> { treinadores[0] } },
+                    new Servicos { Nome = "Servico B", Preco = 25, ListaTreinadores = new List<Treinadores> { treinadores[0], treinadores[1] } },
+                    new Servicos { Nome = "Servico C", Preco = 15, ListaTreinadores = new List<Treinadores> { treinadores[1] } },
+                    new Servicos { Nome = "Servico D", Preco = 64, ListaTreinadores = new List<Treinadores> { treinadores[1] } }
+                };
+                await dbContext.Servicos.AddRangeAsync(servicos);
+                await dbContext.SaveChangesAsync();
+                haAdicao = true;
+            }
+
+            // Ensure related entities are loaded and tracked
+            var loadedClientes = await dbContext.Clientes.ToListAsync();
+            var loadedServicos = await dbContext.Servicos.ToListAsync();
+
+            var compras = Array.Empty<Compras>();
+            if (!dbContext.Compras.Any())
+            {
+                compras = new[]
+                {
+                    new Compras { DataCompra = DateTime.Now, ValorCompraAux = "100.20", ServicoFK = loadedServicos[0].Id, ClienteFK = loadedClientes[0].Id },
+                    new Compras { DataCompra = DateTime.Now.AddDays(-1), ValorCompraAux = "200,15", ServicoFK = loadedServicos[1].Id, ClienteFK = loadedClientes[0].Id }
+                };
+                await dbContext.Compras.AddRangeAsync(compras);
+                haAdicao = true;
+            }
+
             try
             {
                 if (haAdicao)
@@ -149,9 +154,9 @@ namespace CPTWorkouts.Data
             }
             catch (Exception ex)
             {
+                // Log or handle exception as needed
                 throw;
             }
         }
     }
 }
-

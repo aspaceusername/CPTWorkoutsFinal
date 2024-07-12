@@ -3,77 +3,100 @@ using CPTWorkouts.Data;
 using CPTWorkouts.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
-namespace CPTWorkouts.Controllers.API;
+using Microsoft.AspNetCore.Routing;
 
-public static class ClientesEndpoints
+namespace CPTWorkouts.Controllers.API
 {
-    public static void MapClientesEndpoints (this IEndpointRouteBuilder routes)
+    public static class ClientesEndpoints
     {
-        //Esta linha cria um grupo de rotas com o caminho base /api/Clientes e marca-o com o nome Clientes
-        var group = routes.MapGroup("/api/Clientes").WithTags(nameof(Clientes));
-
-        //Este endpoint responde a pedidos GET /api/Clientes. Ele recupera todos os registos de Clientes da base de dados e retorna-os como uma lista.
-        group.MapGet("/", async (ApplicationDbContext db) =>
+        public static void MapClientesEndpoints(this IEndpointRouteBuilder routes)
         {
-            return await db.Clientes.ToListAsync();
-        })
-        .WithName("GetAllClientes")
-        .WithOpenApi();
+            var group = routes.MapGroup("/api/Clientes").WithTags(nameof(Clientes));
 
-        //Este endpoint responde a pedidos GET /api/Clientes/{id}.
-        //Procura um registo de Clientes pelo seu ID. Se encontrado, retorna o registo; caso contrário, retorna um resultado NotFound.
-        group.MapGet("/{id}", async Task<Results<Ok<Clientes>, NotFound>> (int id, ApplicationDbContext db) =>
-        {
-            return await db.Clientes.AsNoTracking()
-                .FirstOrDefaultAsync(model => model.Id == id)
-                is Clientes model
-                    ? TypedResults.Ok(model)
-                    : TypedResults.NotFound();
-        })
-        .WithName("GetClientesById")
-        .WithOpenApi();
+            group.MapGet("/", async (ApplicationDbContext db) =>
+            {
+                return await db.Clientes.ToListAsync();
+            })
+            .WithName("GetAllClientes")
+            .WithOpenApi();
 
-        //Este endpoint responde a pedidos PUT /api/Clientes/{id}. Ele atualiza um registo existente de Clientes com os dados fornecidos.
-        //Se a atualização for bem-sucedida, retorna Ok; caso contrário, retorna NotFound.
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, Clientes clientes, ApplicationDbContext db) =>
-        {
-            var affected = await db.Clientes
-                .Where(model => model.Id == id)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(m => m.NumCliente, clientes.NumCliente)
-                    .SetProperty(m => m.EquipaFK, clientes.EquipaFK)
-                    .SetProperty(m => m.Id, clientes.Id)
-                    .SetProperty(m => m.Nome, clientes.Nome)
-                    .SetProperty(m => m.DataNascimento, clientes.DataNascimento)
-                    .SetProperty(m => m.Telemovel, clientes.Telemovel)
-                    .SetProperty(m => m.UserID, clientes.UserID)
-                    );
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
-        })
-        .WithName("UpdateClientes")
-        .WithOpenApi();
+            group.MapGet("/{id}", async Task<Results<Ok<Clientes>, NotFound>> (int id, ApplicationDbContext db) =>
+            {
+                var cliente = await db.Clientes.AsNoTracking()
+                    .FirstOrDefaultAsync(model => model.Id == id);
 
-        //Este endpoint responde a pedidos POST /api/Clientes.
-        //Adiciona um novo registo de Clientes à base de dados e retorna o registo criado com a sua localização.
-        group.MapPost("/", async (Clientes clientes, ApplicationDbContext db) =>
-        {
-            db.Clientes.Add(clientes);
-            await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/Clientes/{clientes.Id}",clientes);
-        })
-        .WithName("CreateClientes")
-        .WithOpenApi();
+                if (cliente == null)
+                {
+                    return TypedResults.NotFound();
+                }
 
-        //Este endpoint responde a pedidos DELETE /api/Clientes/{id}.
-        //Apaga um registo de Clientes pelo seu ID. Se a eliminação for bem-sucedida, retorna Ok; caso contrário, retorna NotFound.
-        group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int id, ApplicationDbContext db) =>
-        {
-            var affected = await db.Clientes
-                .Where(model => model.Id == id)
-                .ExecuteDeleteAsync();
-            return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
-        })
-        .WithName("DeleteClientes")
-        .WithOpenApi();
+                return TypedResults.Ok(cliente);
+            })
+            .WithName("GetClientesById")
+            .WithOpenApi();
+
+            group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, Clientes clientes, ApplicationDbContext db) =>
+            {
+                var existingCliente = await db.Clientes.FindAsync(id);
+
+                if (existingCliente == null)
+                {
+                    return TypedResults.NotFound();
+                }
+
+                existingCliente.NumCliente = clientes.NumCliente;
+                existingCliente.EquipaFK = clientes.EquipaFK;
+                existingCliente.Nome = clientes.Nome;
+                existingCliente.DataNascimento = clientes.DataNascimento;
+                existingCliente.Telemovel = clientes.Telemovel;
+                existingCliente.UserID = clientes.UserID;
+
+                await db.SaveChangesAsync();
+
+                return TypedResults.Ok();
+            })
+            .WithName("UpdateClientes")
+            .WithOpenApi();
+
+            group.MapPost("/", async Task<Results<Created<Clientes>, BadRequest>> (Clientes clientes, ApplicationDbContext db) =>
+            {
+                if (clientes == null)
+                {
+                    return TypedResults.BadRequest();
+                }
+
+                try
+                {
+                    db.Clientes.Add(clientes);
+                    await db.SaveChangesAsync();
+
+                    return TypedResults.Created($"/api/Clientes/{clientes.Id}", clientes);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Error adding cliente: {ex.Message}");
+                    return TypedResults.BadRequest();
+                }
+            })
+            .WithName("CreateClientes")
+            .WithOpenApi();
+
+            group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int id, ApplicationDbContext db) =>
+            {
+                var existingCliente = await db.Clientes.FindAsync(id);
+
+                if (existingCliente == null)
+                {
+                    return TypedResults.NotFound();
+                }
+
+                db.Clientes.Remove(existingCliente);
+                await db.SaveChangesAsync();
+
+                return TypedResults.Ok();
+            })
+            .WithName("DeleteClientes")
+            .WithOpenApi();
+        }
     }
 }

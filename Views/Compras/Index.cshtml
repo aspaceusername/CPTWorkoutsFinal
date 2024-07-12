@@ -19,29 +19,31 @@
                 @Html.DisplayNameFor(model => model.Servico)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cliente)
+                @Html.DisplayNameFor(model => model.Cliente.Nome)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataCompra)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Servico.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cliente)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataCompra)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Servico.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cliente.Nome)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-clienteFK="@item.ClienteFK" asp-route-servicoFK="@item.ServicoFK">Editar</a> |
+                    <a asp-action="Details" asp-route-clienteFK="@item.ClienteFK" asp-route-servicoFK="@item.ServicoFK">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-clienteFK="@item.ClienteFK" asp-route-servicoFK="@item.ServicoFK">Apagar</a>
+
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
