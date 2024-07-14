@@ -19,10 +19,10 @@ public static class ComprasEndpoints
         .WithName("GetAllCompras")
         .WithOpenApi();
 
-        group.MapGet("/{id}", async Task<Results<Ok<Compras>, NotFound>> (int clientefk, ApplicationDbContext db) =>
+        group.MapGet("/{id}", async Task<Results<Ok<Compras>, NotFound>> (int id, ApplicationDbContext db) =>
         {
             return await db.Compras.AsNoTracking()
-                .FirstOrDefaultAsync(model => model.ClienteFK == clientefk)
+                .FirstOrDefaultAsync(model => model.ClienteFK == id)
                 is Compras model
                     ? TypedResults.Ok(model)
                     : TypedResults.NotFound();
