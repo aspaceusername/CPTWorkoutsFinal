@@ -113,7 +113,7 @@ namespace Aulas.Areas.Identity.Pages.Account {
         public string TreinadorID { get; set; }
         public bool IsTreinador { get; set; }
         public Clientes Cliente { get; set; }
-        }
+       }
 
         private static readonly List<string> ValidTreinadorIDs = new List<string>
         {

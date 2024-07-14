@@ -25,7 +25,6 @@ namespace Aulas.Data
             }
             catch (Exception ex)
             {
-                // Handle the exception (log it, rethrow it, etc.)
                 throw;
             }
 

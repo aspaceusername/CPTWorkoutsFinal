@@ -12,6 +12,9 @@ namespace CPTWorkouts.Models
         {
             ListaCompras = new HashSet<Compras>();
         }
+        /// <summary>
+        /// numcliente serve para atribuir uma distinção clara entre os clientes num contexto de frontend, substituindo nesta função o UserID
+        /// </summary>
         public int? NumCliente { get; set; }
 
 
