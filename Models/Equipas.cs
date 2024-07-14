@@ -10,7 +10,9 @@ namespace CPTWorkouts.Models
         public Equipas() {
             ListaClientes = new HashSet<Clientes>();
         }
-
+        /// <summary>
+        /// Chave primária correspondente à equipa
+        /// </summary>
         [Key] // PK
         public int Id { get; set; }
         /// <summary>

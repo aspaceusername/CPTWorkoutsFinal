@@ -8,7 +8,9 @@ namespace CPTWorkouts.Models
     [PrimaryKey(nameof(ClienteFK), nameof(ServicoFK))] // PK para EF >= 7.0
     public class Compras
     {
-
+        /// <summary>
+        /// Id que serve para distinguir compras realizadas por um mesmo cliente
+        /// </summary>
         public int Id { get; set; }
 
         /// <summary>
@@ -31,12 +33,12 @@ namespace CPTWorkouts.Models
         /// </summary>
         public decimal ValorCompra { get; set; }
 
-        // FK to Servicos
+        // FK dos Servicos
         [ForeignKey(nameof(Servico))]
         public int ServicoFK { get; set; }
         public Servicos Servico { get; set; }
 
-        // FK to Clientes
+        // FK dos Clientes
         [ForeignKey(nameof(Cliente))]
         public int ClienteFK { get; set; }
         public Clientes Cliente { get; set; }

@@ -13,7 +13,9 @@ namespace CPTWorkouts.Models
             ListaTreinadores = new HashSet<Treinadores>();
             ListaCompras = new HashSet<Compras>();
         }
-
+        /// <summary>
+        /// chave primária do serviço
+        /// </summary>
         [Key] // PK
         public int Id { get; set; }
         /// <summary>

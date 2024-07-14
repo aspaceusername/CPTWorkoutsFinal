@@ -76,4 +76,6 @@ app.MapTreinadoresEndpoints();
 
 app.MapEquipasEndpoints();
 
+app.MapControllers();
+
 app.Run();

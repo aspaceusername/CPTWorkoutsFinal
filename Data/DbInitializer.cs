@@ -19,8 +19,8 @@ namespace CPTWorkouts.Data
             dbContext.Database.EnsureCreated();
 
             bool haAdicao = false;
-
-            // Ensure roles exist
+            
+            // Certificar a existência de roles
             if (!await roleManager.RoleExistsAsync("Cliente"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Cliente"));
@@ -31,7 +31,7 @@ namespace CPTWorkouts.Data
                 await roleManager.CreateAsync(new IdentityRole("Treinador"));
             }
 
-            // Create and save users
+            // Criar e guardar utilizadores
             var hasher = new PasswordHasher<IdentityUser>();
             IdentityUser user1 = null;
             IdentityUser user2 = null;
@@ -63,15 +63,14 @@ namespace CPTWorkouts.Data
                 };
 
                 await dbContext.Users.AddRangeAsync(user1, user2);
-                await dbContext.SaveChangesAsync(); // Ensure users are saved to get their IDs
+                await dbContext.SaveChangesAsync(); // Guardar os utilizadores para se poder obter os seus IDs
                 haAdicao = true;
 
-                // Assign roles to users
+                // Atribuir roles aos utilizadores
                 await userManager.AddToRoleAsync(user1, "Cliente");
                 await userManager.AddToRoleAsync(user2, "Treinador");
             }
 
-            // Additional seeding logic...
             var equipas = Array.Empty<Equipas>();
             if (!dbContext.Equipas.Any())
             {
@@ -129,7 +128,6 @@ namespace CPTWorkouts.Data
                 haAdicao = true;
             }
 
-            // Ensure related entities are loaded and tracked
             var loadedClientes = await dbContext.Clientes.ToListAsync();
             var loadedServicos = await dbContext.Servicos.ToListAsync();
 
@@ -154,7 +152,6 @@ namespace CPTWorkouts.Data
             }
             catch (Exception ex)
             {
-                // Log or handle exception as needed
                 throw;
             }
         }
