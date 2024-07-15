@@ -64,26 +64,45 @@ namespace CPTWorkouts.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] Equipas equipa, [FromForm] IFormFile ImagemLogo)
         {
+            // a anotação [Bind] informa o servidor de quais os atributos
+            // que devem ser lidos do objeto que vem do browser
+
+            /* Guardar a imagem no disco rígido do Servidor
+             * Algoritmo
+             * 1- há ficheiro?
+             *    1.1 - não
+             *          devolvo controlo ao browser
+             *          com mensagem de erro
+             *    1.2 - sim
+             *          Será imagem (JPG,JPEG,PNG)?
+             *          1.2.1 - não
+             *                  uso logótipo pre-definido
+             *          1.2.2 - sim
+             *                  - determinar o nome da imagem
+             *                  - guardar esse nome na BD
+             *                  - guardar o ficheir no disco rígido
+             */
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     if (ImagemLogo == null || ImagemLogo.Length <= 0)
                     {
-                        ModelState.AddModelError("ImagemLogo", "Deve fornecer um logótipo");
+                        ModelState.AddModelError("ImagemLogo", "Deve fornecer um logotipo");
                         return BadRequest(ModelState);
                     }
 
                     if (!(ImagemLogo.ContentType == "image/png" || ImagemLogo.ContentType == "image/jpeg"))
                     {
-                        ModelState.AddModelError("ImagemLogo", "O logótipo deve ser uma imagem PNG ou JPEG.");
+                        ModelState.AddModelError("ImagemLogo", "O logotipo deve ser uma imagem PNG ou JPEG.");
                         return BadRequest(ModelState);
                     }
 
-                    // Generate a unique filename for the image
+                    //gerar um nome de ficheiro
                     string nomeImagem = $"{Guid.NewGuid()}{Path.GetExtension(ImagemLogo.FileName)}";
 
-                    // Save the image to wwwroot/Imagens folder
+                    // guardar a imagem no wwwroot/imagens
                     string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Imagens", nomeImagem);
 
                     using (var stream = new FileStream(imagePath, FileMode.Create))
@@ -91,10 +110,10 @@ namespace CPTWorkouts.Controllers
                         await ImagemLogo.CopyToAsync(stream);
                     }
 
-                    // Resize the image if necessary (optional)
+                    // Redimensionar a imagem
                     ResizeImage(imagePath);
 
-                    // Save the Equipas object to database
+                    // gaurdar o objecto equipas na base de dados
                     equipa.Logotipo = nomeImagem;
                     _context.Add(equipa);
                     await _context.SaveChangesAsync();
@@ -103,7 +122,7 @@ namespace CPTWorkouts.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Erro ao salvar equipa: {ex.Message}");
+                    ModelState.AddModelError("", $"Erro ao guardar equipa: {ex.Message}");
                     return BadRequest(ModelState);
                 }
             }
@@ -111,7 +130,7 @@ namespace CPTWorkouts.Controllers
             return BadRequest(ModelState);
         }
 
-        // Optional: Resize image function
+        // redimensionar imagem
         private void ResizeImage(string imagePath)
         {
             using (var image = Image.Load(imagePath))
