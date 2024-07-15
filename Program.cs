@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000")
+        builder => builder.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000","https://cptworkouts-react-final.azurewebsites.net/")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials());
@@ -54,9 +54,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
 app.UseCors("AllowSpecificOrigin");
+
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
