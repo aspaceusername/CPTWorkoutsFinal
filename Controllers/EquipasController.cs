@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -16,16 +16,10 @@ namespace CPTWorkouts.Controllers
     [Authorize(Roles = "Treinador")]
     public class EquipasController : Controller
     {
-        /// <summary>
-        /// Referência à BD do projecto
-        /// </summary>
         private readonly ApplicationDbContext _context;
-
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public EquipasController(
-           ApplicationDbContext context,
-           IWebHostEnvironment webHostEnvironment)
+        public EquipasController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
@@ -47,15 +41,16 @@ namespace CPTWorkouts.Controllers
                 return NotFound();
             }
 
-            var equipas = await _context.Equipas
+            var equipa = await _context.Equipas
                 .Include(e => e.ListaClientes)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (equipas == null)
+
+            if (equipa == null)
             {
                 return NotFound();
             }
 
-            return View(equipas);
+            return View(equipa);
         }
 
         // GET: Equipas/Create
@@ -65,120 +60,66 @@ namespace CPTWorkouts.Controllers
         }
 
         // POST: Equipas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Logotipo")] Equipas equipa, IFormFile ImagemLogo)
+        public async Task<IActionResult> Create([FromForm] Equipas equipa, [FromForm] IFormFile ImagemLogo)
         {
-            // a anotação [Bind] informa o servidor de quais os atributos
-            // que devem ser lidos do objeto que vem do browser
-
-            /* Guardar a imagem no disco rígido do Servidor
-             * Algoritmo
-             * 1- há ficheiro?
-             *    1.1 - não
-             *          devolvo controlo ao browser
-             *          com mensagem de erro
-             *    1.2 - sim
-             *          Será imagem (JPG,JPEG,PNG)?
-             *          1.2.1 - não
-             *                  uso logótipo pre-definido
-             *          1.2.2 - sim
-             *                  - determinar o nome da imagem
-             *                  - guardar esse nome na BD
-             *                  - guardar o ficheir no disco rígido
-             */
-
-            // avalia se os dados recebido do browser estão
-            // de acordo com o Model
             if (ModelState.IsValid)
             {
-                // vars auxiliares
-                string nomeImagem = "";
-                bool haImagem = false;
-
-                // há ficheiro?
-                if (ImagemLogo == null)
+                try
                 {
-                    // não há
-                    // crio msg de erro
-                    ModelState.AddModelError("",
-                       "Deve fornecer um logótipo");
-                    // devolver controlo à View
-                    return View(equipa);
+                    if (ImagemLogo == null || ImagemLogo.Length <= 0)
+                    {
+                        ModelState.AddModelError("ImagemLogo", "Deve fornecer um logótipo");
+                        return BadRequest(ModelState);
+                    }
+
+                    if (!(ImagemLogo.ContentType == "image/png" || ImagemLogo.ContentType == "image/jpeg"))
+                    {
+                        ModelState.AddModelError("ImagemLogo", "O logótipo deve ser uma imagem PNG ou JPEG.");
+                        return BadRequest(ModelState);
+                    }
+
+                    // Generate a unique filename for the image
+                    string nomeImagem = $"{Guid.NewGuid()}{Path.GetExtension(ImagemLogo.FileName)}";
+
+                    // Save the image to wwwroot/Imagens folder
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "Imagens", nomeImagem);
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await ImagemLogo.CopyToAsync(stream);
+                    }
+
+                    // Resize the image if necessary (optional)
+                    ResizeImage(imagePath);
+
+                    // Save the Equipas object to database
+                    equipa.Logotipo = nomeImagem;
+                    _context.Add(equipa);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
                 }
-                else
+                catch (Exception ex)
                 {
-                    // há ficheiro, mas é uma imagem?
-                    if (!(ImagemLogo.ContentType == "image/png" ||
-                         ImagemLogo.ContentType == "image/jpeg"
-                       ))
-                    {
-                        // não
-                        // vamos usar uma imagem pre-definida
-                        equipa.Logotipo = "logoEquipa.png";
-                    }
-                    else
-                    {
-                        // há imagem
-                        haImagem = true;
-                        // gerar nome imagem
-                        Guid g = Guid.NewGuid();
-                        nomeImagem = g.ToString();
-                        string extensaoImagem = Path.GetExtension(ImagemLogo.FileName).ToLowerInvariant();
-                        nomeImagem += extensaoImagem;
-                        // guardar o nome do ficheiro na BD
-                        equipa.Logotipo = nomeImagem;
-                    }
+                    ModelState.AddModelError("", $"Erro ao salvar equipa: {ex.Message}");
+                    return BadRequest(ModelState);
                 }
-
-
-                // adiciona à BD os dados vindos da View
-                _context.Add(equipa);
-                // Commit
-                await _context.SaveChangesAsync();
-
-                // guardar a imagem do logótipo
-                if (haImagem)
-                {
-                    // determinar o local de armazenamento da imagem
-                    string localizacaoImagem = Path.Combine(_webHostEnvironment.WebRootPath, "Imagens");
-
-                    // verifica se o diretório existe; se não existir, cria
-                    if (!Directory.Exists(localizacaoImagem))
-                    {
-                        Directory.CreateDirectory(localizacaoImagem);
-                    }
-
-                    // caminho completo onde a imagem será armazenada
-                    localizacaoImagem = Path.Combine(localizacaoImagem, nomeImagem);
-
-                    // guardar a imagem no Disco Rígido
-                    using var stream = new FileStream(localizacaoImagem, FileMode.Create);
-
-                    // carregar a imagem do stream
-                    using (var image = Image.Load(ImagemLogo.OpenReadStream()))
-                    {
-                        // redimensionar a imagem para o tamanho desejado (exemplo: largura de 800 pixels)
-                        int novaLargura = 800;
-                        image.Mutate(x => x.Resize(novaLargura, 0)); // 0 mantém a proporção original
-
-                        // salvar a imagem redimensionada no stream
-                        image.Save(stream, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder());
-                    }
-                }
-
-
-
-
-                // redireciona o utilizador para a página de 'início'
-                // dos Cursos
-                return RedirectToAction(nameof(Index));
             }
-            // se cheguei aqui é pq alguma coisa correu mal
-            // devolve controlo à View, apresentando os dados recebidos
-            return View(equipa);
+
+            return BadRequest(ModelState);
+        }
+
+        // Optional: Resize image function
+        private void ResizeImage(string imagePath)
+        {
+            using (var image = Image.Load(imagePath))
+            {
+                int novaLargura = 800;
+                image.Mutate(x => x.Resize(novaLargura, 0));
+                image.Save(imagePath);
+            }
         }
 
         // GET: Equipas/Edit/5
@@ -189,22 +130,21 @@ namespace CPTWorkouts.Controllers
                 return NotFound();
             }
 
-            var equipas = await _context.Equipas.FindAsync(id);
-            if (equipas == null)
+            var equipa = await _context.Equipas.FindAsync(id);
+            if (equipa == null)
             {
                 return NotFound();
             }
-            return View(equipas);
+
+            return View(equipa);
         }
 
         // POST: Equipas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Logotipo")] Equipas equipas)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Logotipo")] Equipas equipa)
         {
-            if (id != equipas.Id)
+            if (id != equipa.Id)
             {
                 return NotFound();
             }
@@ -213,12 +153,12 @@ namespace CPTWorkouts.Controllers
             {
                 try
                 {
-                    _context.Update(equipas);
+                    _context.Update(equipa);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EquipasExists(equipas.Id))
+                    if (!EquipasExists(equipa.Id))
                     {
                         return NotFound();
                     }
@@ -229,7 +169,7 @@ namespace CPTWorkouts.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(equipas);
+            return View(equipa);
         }
 
         // GET: Equipas/Delete/5
@@ -240,14 +180,15 @@ namespace CPTWorkouts.Controllers
                 return NotFound();
             }
 
-            var equipas = await _context.Equipas
+            var equipa = await _context.Equipas
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (equipas == null)
+
+            if (equipa == null)
             {
                 return NotFound();
             }
 
-            return View(equipas);
+            return View(equipa);
         }
 
         // POST: Equipas/Delete/5
@@ -255,13 +196,13 @@ namespace CPTWorkouts.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var equipas = await _context.Equipas.FindAsync(id);
-            if (equipas != null)
+            var equipa = await _context.Equipas.FindAsync(id);
+            if (equipa != null)
             {
-                _context.Equipas.Remove(equipas);
+                _context.Equipas.Remove(equipa);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

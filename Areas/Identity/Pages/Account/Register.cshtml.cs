@@ -125,16 +125,16 @@ namespace Aulas.Areas.Identity.Pages.Account {
          //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-      /// <summary>
-      /// Método que reage ao HTTP POST
-      /// </summary>
-      /// <param name="returnUrl"></param>
-      /// <returns></returns>
-      public async Task<IActionResult> OnPostAsync(string returnUrl = null) {
-         returnUrl ??= Url.Content("~/");
+        /// <summary>
+        /// Método que reage ao HTTP POST
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        {
+            _logger.LogInformation("Received registration request: {@Input}", Input);
 
-            //   ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-
+            returnUrl ??= Url.Content("~/");
 
             if (Input.IsTreinador)
             {
@@ -150,117 +150,89 @@ namespace Aulas.Areas.Identity.Pages.Account {
                 ModelState.Remove("Input.TreinadorID");
             }
 
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
+                var user = CreateUser();
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                var result = await _userManager.CreateAsync(user, Input.Password);
 
-            var user = CreateUser();
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User {Email} created a new account with password.", Input.Email);
 
-            await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-            await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-
-            // ação de, realmente, adicionar à BD (AspNetUsers) os dados do Utilizador
-            var result = await _userManager.CreateAsync(user, Input.Password);
-            
-            if (result.Succeeded) {
-               // houve sucesso na criação do Utilizador
-                _logger.LogInformation("User created a new account with password.");
-                    Console.WriteLine($"User created a new account with password.");
                     if (Input.IsTreinador)
                     {
-                        Console.WriteLine($"User is treinador");
+                        _logger.LogInformation("User {Email} is a Treinador.", Input.Email);
                         if (ValidTreinadorIDs.Contains(Input.TreinadorID))
-                            {
-                                await _userManager.AddToRoleAsync(user, "Treinador");
-
-                                Input.Treinador.UserID = user.Id;
-                                Input.Treinador.TreinadorID = Input.TreinadorID;
-                                _context.Add(Input.Treinador);
-                                await _context.SaveChangesAsync();
-                            }
+                        {
+                            await _userManager.AddToRoleAsync(user, "Treinador");
+                            Input.Treinador.UserID = user.Id;
+                            Input.Treinador.TreinadorID = Input.TreinadorID;
+                            _context.Add(Input.Treinador);
+                            await _context.SaveChangesAsync();
+                        }
                         else
-                            {
-                                ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
-                                return Page();
-                            }
+                        {
+                            _logger.LogWarning("Invalid Treinador ID {TreinadorID} for user {Email}.", Input.TreinadorID, Input.Email);
+                            ModelState.AddModelError(string.Empty, "Invalid Treinador ID.");
+                            return Page();
+                        }
                     }
                     else
-                        {
-                            Console.WriteLine($"User is cliente");
-                            await _userManager.AddToRoleAsync(user, "Cliente");
-                            Input.Cliente.UserID = user.Id;
-                            Input.Cliente.NumCliente = 100;
-                            _context.Add(Input.Cliente);
-                            Console.WriteLine($"Added client {Input.Cliente.Nome} to context.");
-                            await _context.SaveChangesAsync();
-                            Console.WriteLine($"saved changes cliente");
-                        }
+                    {
+                        _logger.LogInformation("User {Email} is a Cliente.", Input.Email);
+                        await _userManager.AddToRoleAsync(user, "Cliente");
+                        Input.Cliente.UserID = user.Id;
+                        Input.Cliente.NumCliente = 100;
+                        _context.Add(Input.Cliente);
+                        await _context.SaveChangesAsync();
+                    }
 
-                await _context.SaveChangesAsync();
-                    // ###########################################
-                    // Associar este utilizador à Role Treinador
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                        protocol: Request.Scheme);
 
-                    //await _userManager.AddToRoleAsync(user,"Treinador");
-                    // ###########################################
-                    /*
-                                   try {
-                                      // ***********************************
-                                      // guardar os dados do Treinador
-                                      // ***********************************
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                                      // criar uma ligação entre a tabela dos Utilizadores
-                                      // (neste caso, um Treinador) e a tabela da Autenticação
-                                      Input.Treinador.UserID = user.Id;
-
-                                      // adicionar os dados do Treinador à BD
-                                      _context.Add(Input.Treinador);
-                                      await _context.SaveChangesAsync();
-                                      // ***********************************
-                                   }
-                                   catch (Exception ex) {
-                                      // É NECESSÁRIO TRATAR A EXCEÇÃO
-                                      // DEFINIR A POLÍTICA, E AÇÕES, A EXECUTAR NESTA SITUAÇÃO
-                                      // POR EXEMPLO:
-                                      //    - apara o utilizador da tabela da Autenticação
-                                      //    - gerar mensagens de erro para a pessoa que está a criar o registo
-                                      //    - guardar os dados do Erro num LOG ou na BD
-                                      //    - etc.
-                                      throw;
-                                   }
-
-                    */
-                    // preparar os dados para o envio do email
-                    // ao utilizador para confirmar a conta criada
-               var userId = await _userManager.GetUserIdAsync(user);
-               var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-               code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-               var callbackUrl = Url.Page(
-                   "/Account/ConfirmEmail",
-                   pageHandler: null,
-                   values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                   protocol: Request.Scheme);
-
-               await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                   $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                    Console.WriteLine($"confirm email sent");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount) {
-                  return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-               }
-               else {
-                  await _signInManager.SignInAsync(user, isPersistent: false);
-                  return LocalRedirect(returnUrl);
-               }
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    }
+                    else
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                }
+                foreach (var error in result.Errors)
+                {
+                    _logger.LogError("Error creating user {Email}: {Error}", Input.Email, error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
-            foreach (var error in result.Errors) {
-               ModelState.AddModelError(string.Empty, error.Description);
+            else
+            {
+                _logger.LogWarning("Invalid model state for user {Email}", Input.Email);
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        _logger.LogWarning("Validation error in field {Field}: {Error}", state.Key, error.ErrorMessage);
+                    }
+                }
             }
-         }
 
-            // If we got this far, something failed, redisplay form
-            Console.WriteLine($"something went wrong");
             return Page();
-      }
+        }
 
-      private IdentityUser CreateUser() {
+        private IdentityUser CreateUser() {
          try {
             return Activator.CreateInstance<IdentityUser>();
          }
