@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        policy => policy.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000", "https://cptworkouts-react-final.azurewebsites.net", "https://cptworkouts-react-finalv2.azurewebsites.net", "https://cptworkouts-react-finalv3.azurewebsites.net/")
+        policy => policy.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000", "https://cptworkouts-react-final.azurewebsites.net", "https://cptworkouts-react-finalv2.azurewebsites.net", "https://cptworkouts-react-finalv3.azurewebsites.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials());
