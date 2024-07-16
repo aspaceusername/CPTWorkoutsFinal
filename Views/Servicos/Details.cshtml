@@ -30,7 +30,6 @@
                 @foreach (var treinador in Model.ListaTreinadores ?? Enumerable.Empty<Treinadores>())
                 {
                     <li>
-                        @treinador.Nome
                         <a asp-action="Details"
                            asp-controller="Treinadores"
                            asp-route-id="@Model.Id">
