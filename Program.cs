@@ -19,18 +19,21 @@ builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Permitir CORS
+// Permitir CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000","https://cptworkouts-react-final.azurewebsites.net/")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials());
+        policy => policy.WithOrigins("https://cptworkouts-react.azurewebsites.net", "http://localhost:3000", "https://cptworkouts-react-final.azurewebsites.net", "https://cptworkouts-react-finalv2.azurewebsites.net")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials());
 });
 
 var app = builder.Build();
+
+// Apply CORS policy early in the pipeline
 app.UseCors("AllowSpecificOrigin");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -53,8 +56,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 
@@ -79,3 +80,4 @@ app.MapEquipasEndpoints();
 app.MapControllers();
 
 app.Run();
+
